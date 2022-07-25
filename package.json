@@ -1,0 +1,23 @@
+{
+  "name": "node-ts",
+  "version": "1.0.0",
+  "description": "Node with TypeScript",
+  "main": "app.ts",
+  "scripts": {
+    "test": "hello world"
+  },
+  "repository": {
+    "type": "git",
+    "url": "node-ts"
+  },
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "javascript"
+  ],
+  "author": "@davydocsurg",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.6.1"
+  }
+}
