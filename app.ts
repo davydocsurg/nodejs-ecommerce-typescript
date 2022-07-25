@@ -1,7 +1,13 @@
 const http = require("http");
 const fs = require("fs");
 
-const server = http.createServer((req, res) => {
+//type BodyInterface = {
+//  sth: Array<any>;
+//};
+
+const bodyExt: Array<any> = [];
+
+const server = http.createServer((req: any, res: any) => {
     const url = req.url;
     const method = req.method;
 
@@ -21,19 +27,22 @@ const server = http.createServer((req, res) => {
     }
 
     if (url === "/msg" && method === "POST") {
-        const body: string[] = [];
         req.on("data", (chunk: string) => {
             console.log(chunk);
-            body.push(chunk);
+            bodyExt.push(chunk);
         });
-        req.on("end", () => {
-            const parsedBody = Buffer.concat(body).toString();
+        return req.on("end", () => {
+            const parsedBody = Buffer.concat(bodyExt).toString();
             const msg = parsedBody.split("=")[1];
-            fs.writeFileSync("message.txt", msg);
+            fs.writeFile("message.txt", msg, (err) => {
+                res.statusCode = 302;
+                res.setHeader("Location", "/");
+                return res.end();
+            });
         });
-        res.statusCode = 302;
-        res.setHeader("Location", "/");
-        return res.end();
+        // res.statusCode = 302;
+        // res.setHeader("Location", "/");
+        // return res.end();
     }
 
     res.setHeader("Content-Header", "text/html");
