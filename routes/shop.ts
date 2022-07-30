@@ -13,7 +13,6 @@ router.get("/", (req: any, res: any, next: any) => {
         pageTitle: "Shop",
         path: "/",
     });
-    // res.sendFile(path.join(__dirname, "../", "views", "shop.html"));
 });
 
 module.exports = router;
