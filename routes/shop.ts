@@ -6,7 +6,13 @@ const adminData = require("./admin");
 
 router.get("/", (req: any, res: any, next: any) => {
     console.log(adminData.products);
-    res.render("shop");
+    const products = adminData.products;
+
+    res.render("shop", {
+        prods: products,
+        pageTitle: "Shop",
+        path: "/admin/shop",
+    });
     // res.sendFile(path.join(__dirname, "../", "views", "shop.html"));
 });
 
