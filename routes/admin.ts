@@ -1,24 +1,11 @@
 import express from "express";
 import path from "path";
-
+import { getAddProductPage, createProduct } from "../controller/products";
 // locals
-const rootDir = require("../utils/path");
+const adminRoute = express.Router();
 
-const router = express.Router();
+adminRoute.get("/add-product", getAddProductPage);
 
-const products: Array<any> = [];
+adminRoute.post(`/add-product`, createProduct);
 
-router.get("/add-product", (req: any, res: any, next: any) => {
-    res.render("add-product", {
-        pageTitle: "Add Product",
-        path: "/admin/add-product",
-    });
-});
-
-router.post(`/add-product`, (req: any, res: any, next: any) => {
-    products.push({ title: req.body.title });
-    res.redirect("/");
-});
-
-exports.routes = router;
-exports.products = products;
+export default adminRoute;
