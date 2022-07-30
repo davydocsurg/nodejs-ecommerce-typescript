@@ -11,7 +11,7 @@ router.get("/", (req: any, res: any, next: any) => {
     res.render("shop", {
         prods: products,
         pageTitle: "Shop",
-        path: "/admin/shop",
+        path: "/",
     });
     // res.sendFile(path.join(__dirname, "../", "views", "shop.html"));
 });
