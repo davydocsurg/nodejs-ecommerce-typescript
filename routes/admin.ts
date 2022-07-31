@@ -1,6 +1,9 @@
 import express from "express";
 import path from "path";
-import { getAddProductPage, createProduct } from "../controller/products";
+import {
+    getAddProductPage,
+    createProduct,
+} from "../controllers/ProductController";
 // locals
 const adminRoute = express.Router();
 

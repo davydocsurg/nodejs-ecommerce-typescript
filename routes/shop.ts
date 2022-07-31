@@ -1,5 +1,5 @@
 import express from "express";
-import { getProducts } from "../controller/products";
+import { getProducts } from "../controllers/ProductController";
 
 const router = express.Router();
 const adminData = require("./admin");
