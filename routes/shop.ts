@@ -1,9 +1,8 @@
 import express from "express";
 import { getProducts } from "../controllers/ProductController";
 
-const router = express.Router();
-const adminData = require("./admin");
+const shopRoutes = express.Router();
 
-router.get("/", getProducts);
+shopRoutes.get("/", getProducts);
 
-module.exports = router;
+export default shopRoutes;
