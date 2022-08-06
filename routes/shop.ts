@@ -1,11 +1,16 @@
 import express from "express";
-import { getProducts } from "../controllers/ShopController";
+import {
+    getCart,
+    getCheckout,
+    getProducts,
+    getProductsIndex,
+} from "../controllers/ShopController";
 
 const shopRoutes = express.Router();
 
-shopRoutes.get("/", getProducts);
-shopRoutes.get("/products");
-shopRoutes.get("/shop");
-shopRoutes.get("/checkout");
+shopRoutes.get("/", getProductsIndex);
+shopRoutes.get("/products", getProducts);
+shopRoutes.get("/cart", getCart);
+shopRoutes.get("/checkout", getCheckout);
 
 export default shopRoutes;

@@ -3,9 +3,19 @@ import path from "path";
 
 interface Products {
     title?: string;
+    imageUrl?: string;
+    description?: string;
+    price?: string;
 }
 
-let products: Products[] = [{ title: "" }];
+let products: Products[] = [
+    { title: "", imageUrl: "", description: "", price: "" },
+
+    // { title: "" },
+    // { imageUrl: "" },
+    // { description: "" },
+    // { price: "" },
+];
 
 const p = path.join(
     path.dirname(process.mainModule?.filename),
@@ -24,8 +34,20 @@ const fetchProductsFromFile = (cb: Function) => {
 
 export class Product {
     title?: string;
-    constructor(t?: string) {
-        this.title = t;
+    imageUrl?: string;
+    description?: string;
+    price?: string;
+
+    constructor(
+        title?: string,
+        imageUrl?: string,
+        description?: string,
+        price?: string
+    ) {
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.price = price;
     }
 
     save() {

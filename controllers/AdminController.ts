@@ -8,7 +8,22 @@ export const getAddProductPage = (req: any, res: any, next: any) => {
 };
 
 export const createProduct = (req: any, res: any, next: any) => {
-    const product = new Product(req.body.title);
+    const title = req.body.title;
+    const imageUrl = req.body.imageUrl;
+    const description = req.body.description;
+    const price = req.body.price;
+
+    const product = new Product(title, imageUrl, description, price);
     product.save();
     res.redirect("/");
+};
+
+export const getProducts = (req: any, res: any, next: any) => {
+    Product.fetchAll((products: any) => {
+        res.render("admin/products", {
+            prods: products,
+            pageTitle: "All Products",
+            path: "/admin/products",
+        });
+    });
 };
