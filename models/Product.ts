@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 
 interface Products {
+    id?: string;
     title?: string;
     imageUrl?: string;
     description?: string;
@@ -9,7 +10,7 @@ interface Products {
 }
 
 let products: Products[] = [
-    { title: "", imageUrl: "", description: "", price: "" },
+    { id: "", title: "", imageUrl: "", description: "", price: "" },
 
     // { title: "" },
     // { imageUrl: "" },
@@ -33,12 +34,14 @@ const fetchProductsFromFile = (cb: Function) => {
 };
 
 export class Product {
+    id?: string;
     title?: string;
     imageUrl?: string;
     description?: string;
     price?: string;
 
     constructor(
+        id?: string,
         title?: string,
         imageUrl?: string,
         description?: string,
@@ -51,7 +54,7 @@ export class Product {
     }
 
     save() {
-        // products.push(this);
+        this.id = Math.random().toString();
         fetchProductsFromFile((products: [any]) => {
             products.push(this);
             fs.writeFile(p, JSON.stringify(products), (err) => {
@@ -62,6 +65,13 @@ export class Product {
 
     static fetchAll(cb: Function) {
         fetchProductsFromFile(cb);
+    }
+
+    static findById(id: string, cb: Function) {
+        fetchProductsFromFile((products: any) => {
+            const product = products.find((p: any) => p.id === id);
+            cb(product);
+        });
     }
 }
 

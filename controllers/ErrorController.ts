@@ -1,5 +1,8 @@
 export const get404 = (req: any, res: any, next: any) => {
-    res.sendStatus(404).render("404", {
+    // res.json({
+    //     res: "not found",
+    // });
+    res.status(404).render("notFound", {
         pageTitle: "Page Not Found",
         path: "/404",
     });
