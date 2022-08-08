@@ -1,7 +1,7 @@
 import { Product } from "../models/Product";
 
 export const getProducts = (req: any, res: any, next: any) => {
-    Product.fetchAll((products: any) => {
+    Product.fetchAll((products: Object) => {
         res.render("shop/product-list", {
             prods: products,
             pageTitle: "All Products",
@@ -15,14 +15,18 @@ export const getProduct = (req: any, res: any, next: any) => {
     Product.findById(prodId, (product: any) => {
         res.render("shop/product-detail", {
             product: product,
-            pageTitle: product.title && product.title,
+            pageTitle: product.title ? product.title : "Product",
             path: "/products",
         });
+
+        // res.json({
+        //     res: product.title,
+        // });
     });
 };
 
 export const getProductsIndex = (req: any, res: any, next: any) => {
-    Product.fetchAll((products: any) => {
+    Product.fetchAll((products: Object) => {
         res.render("shop/index", {
             prods: products,
             pageTitle: "Shop",
