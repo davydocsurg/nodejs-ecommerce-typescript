@@ -1,35 +1,27 @@
 import fs from "fs";
 import path from "path";
+import { PRODUCTS_JSON_PATH } from "../utils/constants";
 
-interface Products {
+export interface Products {
     id?: string;
     title?: string;
     imageUrl?: string;
     description?: string;
-    price?: string;
+    price: number;
 }
 
-let products: Products[] = [
-    { id: "", title: "", imageUrl: "", description: "", price: "" },
-
-    // { title: "" },
-    // { imageUrl: "" },
-    // { description: "" },
-    // { price: "" },
-];
-
-const p = path.join(
-    path.dirname(process.mainModule?.filename),
-    "data",
-    "products.json"
-);
+let products: Products[];
 
 const fetchProductsFromFile = (cb: Function) => {
-    fs.readFile(p, (err, fileContent) => {
+    //console.log(p);
+
+    fs.readFile(PRODUCTS_JSON_PATH, "utf8", (err, fileContent) => {
         if (err) {
             return cb([]);
         }
-        cb(JSON.parse(fileContent));
+        let data = JSON.parse(fileContent.toString());
+
+        cb(data);
     });
 };
 
@@ -38,15 +30,15 @@ export class Product {
     title?: string;
     imageUrl?: string;
     description?: string;
-    price?: string;
+    price?: number;
 
     constructor(
-        id?: string,
         title?: string,
         imageUrl?: string,
         description?: string,
-        price?: string
+        price?: number
     ) {
+        // this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
         this.description = description;
@@ -55,11 +47,16 @@ export class Product {
 
     save() {
         this.id = Math.random().toString();
-        fetchProductsFromFile((products: [any]) => {
+
+        fetchProductsFromFile((products: any) => {
             products.push(this);
-            fs.writeFile(p, JSON.stringify(products), (err) => {
-                console.log(err, "?");
-            });
+            fs.writeFile(
+                PRODUCTS_JSON_PATH,
+                JSON.stringify(products),
+                (err) => {
+                    console.log(err, "?");
+                }
+            );
         });
     }
 
@@ -68,11 +65,9 @@ export class Product {
     }
 
     static findById(id: string, cb: Function) {
-        fetchProductsFromFile((products: any) => {
-            const product = products.find((p: any) => p.id === id);
+        fetchProductsFromFile((products: Array<Products>) => {
+            const product = products.find((product) => product.id == id.trim());
             cb(product);
         });
     }
 }
-
-// export default new Product();
