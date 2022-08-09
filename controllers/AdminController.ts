@@ -12,6 +12,7 @@ export const createProduct = (req: any, res: any, next: any) => {
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const price = req.body.price;
+    console.log(req.body);
 
     const product = new Product(title, imageUrl, description, price);
     product.save();
