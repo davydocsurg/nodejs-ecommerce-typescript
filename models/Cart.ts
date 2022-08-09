@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { PRODUCTS_JSON_PATH } from "../utils/constants";
+import { CART_JSON_PATH } from "../utils/constants";
 import { Product, Products } from "./Product";
 
 // interface existingProds{};
@@ -8,24 +8,24 @@ interface updatedProds {
     qty?: string;
 }
 
-// const p = path.join(
-//     path.dirname(process.mainModule?.filename),
-//     "data",
-//     "products.json"
-// );
-// const p = `${process.cwd()}/data/products.json`;
+export interface CartType {
+    id: string;
+    title: string;
+    imageUrl: string;
+    description: string;
+    price: number;
+}
 
 export class Cart {
     static addProduct(id: string, productPrice: number) {
         // get product details
         // console.log(id);
-
         Product.findById(id, (item: Product) => {
             console.log(item.id);
         });
 
         // fetch the previous cart
-        fs.readFile(PRODUCTS_JSON_PATH, (err: any, fileContent) => {
+        fs.readFile(CART_JSON_PATH, (err: any, fileContent) => {
             let cart = { products: [], totalPrice: 0 };
             if (!err) {
                 cart = JSON.parse(fileContent.toString());
@@ -52,14 +52,11 @@ export class Cart {
                     updatedProducts = { id: id, qty: 1 };
                     cart.products = [...cart.products, updatedProducts];
                 }
-                cart.totalPrice = cart.totalPrice + productPrice;
-                fs.writeFile(
-                    PRODUCTS_JSON_PATH,
-                    JSON.stringify(cart),
-                    (err) => {
-                        console.log(err);
-                    }
-                );
+                cart.totalPrice = cart.totalPrice + +productPrice;
+
+                fs.writeFile(CART_JSON_PATH, JSON.stringify(cart), (err) => {
+                    console.log(err);
+                });
             }
         });
     }

@@ -11,22 +11,6 @@ export interface Products {
 }
 
 let products: Products[];
-// = [
-//     { id: "", title: "", imageUrl: "", description: "", price: "" },
-
-//     // { id: "" },
-//     // { title: "" },
-//     // { imageUrl: "" },
-//     // { description: "" },
-//     // { price: "" },
-// ];
-
-// const p = path.join(
-//     path.dirname(process.mainModule.filename),
-//     "data",
-//     "products.json"
-// );
-// const p = `${process.cwd()}/data/products.json`;
 
 const fetchProductsFromFile = (cb: Function) => {
     //console.log(p);
