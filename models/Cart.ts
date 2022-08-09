@@ -19,7 +19,6 @@ export interface CartType {
 export class Cart {
     static addProduct(id: string, productPrice: number) {
         // get product details
-        // console.log(id);
         Product.findById(id, (item: Product) => {
             console.log(item.id);
         });
@@ -30,7 +29,6 @@ export class Cart {
             if (!err) {
                 cart = JSON.parse(fileContent.toString());
             }
-            // console.log(cart, " aaaaa");
 
             // analyze the cart => find existing product
             if (cart.products) {
@@ -52,12 +50,17 @@ export class Cart {
                     updatedProducts = { id: id, qty: 1 };
                     cart.products = [...cart.products, updatedProducts];
                 }
-                cart.totalPrice = cart.totalPrice + +productPrice;
+                this.calcTotalPrice(cart, +productPrice);
 
                 fs.writeFile(CART_JSON_PATH, JSON.stringify(cart), (err) => {
                     console.log(err);
                 });
             }
         });
+    }
+
+    static calcTotalPrice(cart: any, productPrice: number) {
+        let totalPrice = (cart.totalPrice += productPrice);
+        return totalPrice;
     }
 }
