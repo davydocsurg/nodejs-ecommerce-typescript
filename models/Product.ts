@@ -33,12 +33,12 @@ export class Product {
     price?: number;
 
     constructor(
+        // id?: string,
         title?: string,
         imageUrl?: string,
         description?: string,
         price?: number
     ) {
-        // this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
         this.description = description;
@@ -46,17 +46,26 @@ export class Product {
     }
 
     save() {
-        this.id = Math.random().toString();
-
         fetchProductsFromFile((products: any) => {
-            products.push(this);
-            fs.writeFile(
-                PRODUCTS_JSON_PATH,
-                JSON.stringify(products),
-                (err) => {
-                    console.log(err, "?");
-                }
-            );
+            if (this.id) {
+                const existingProductsIndex = products.findIndex(
+                    (prod: any) => prod.id === this.id
+                );
+                const updatedProducts = [...products];
+                return (updatedProducts[existingProductsIndex] = this);
+            } else {
+                this.id = Math.random().toString();
+                console.log(this);
+
+                products.push(this);
+                fs.writeFile(
+                    PRODUCTS_JSON_PATH,
+                    JSON.stringify(products),
+                    (err) => {
+                        console.log(err, "?");
+                    }
+                );
+            }
         });
     }
 
