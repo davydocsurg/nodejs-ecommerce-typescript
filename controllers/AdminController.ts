@@ -19,8 +19,10 @@ export const getEditProductPage = (
     next: NextFunction
 ) => {
     const editMode = req.query.edit;
+
     if (!editMode) {
         returnToHome(res);
+        console.log("not edit");
     }
 
     const prodId = req.params.id;
@@ -28,14 +30,16 @@ export const getEditProductPage = (
     Product.findById(prodId, (product: Object) => {
         if (!product) {
             returnToHome(res);
+            console.log("no product");
         }
 
         res.render("admin/edit-product", {
             pageTitle: "Edit Product",
             path: "/admin/edit-product",
             editing: editMode,
-            product,
+            product: product,
         });
+        console.log(product);
     });
 };
 
