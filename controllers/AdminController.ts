@@ -9,6 +9,7 @@ export const getAddProductPage = (
     res.render("admin/edit-product", {
         pageTitle: "Add Product",
         path: "/admin/add-product",
+        editing: false,
     });
 };
 
@@ -18,8 +19,10 @@ export const getEditProductPage = (
     next: NextFunction
 ) => {
     const editMode = req.query.edit;
+
     if (!editMode) {
         returnToHome(res);
+        console.log("not edit");
     }
 
     const prodId = req.params.id;
@@ -27,14 +30,16 @@ export const getEditProductPage = (
     Product.findById(prodId, (product: Object) => {
         if (!product) {
             returnToHome(res);
+            console.log("no product");
         }
 
         res.render("admin/edit-product", {
             pageTitle: "Edit Product",
             path: "/admin/edit-product",
             editing: editMode,
-            product,
+            product: product,
         });
+        console.log(product);
     });
 };
 
@@ -43,14 +48,38 @@ export const createProduct = (
     res: Response,
     next: NextFunction
 ) => {
+    console.log("creating...");
+
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const price = req.body.price;
-    console.log(req.body);
 
     const product = new Product(title, imageUrl, description, price);
     product.save();
+    res.redirect("/");
+};
+
+export const updateProduct = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const prodId = req.body.id;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedImageUrl = req.body.imageUrl;
+    const updatedDesc = req.body.description;
+
+    const updateProduct = new Product(
+        prodId,
+        updatedImageUrl,
+        updatedPrice,
+        updatedTitle,
+        updatedDesc
+    );
+
+    updateProduct.save();
     res.redirect("/");
 };
 
