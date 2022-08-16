@@ -33,12 +33,13 @@ export class Product {
     price?: number;
 
     constructor(
-        // id?: string,
+        id?: string,
         title?: string,
         imageUrl?: string,
         description?: string,
         price?: number
     ) {
+        this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
         this.description = description;
@@ -47,25 +48,33 @@ export class Product {
 
     save() {
         fetchProductsFromFile((products: any) => {
-            if (this.id) {
-                const existingProductsIndex = products.findIndex(
-                    (prod: any) => prod.id === this.id
-                );
-                const updatedProducts = [...products];
-                return (updatedProducts[existingProductsIndex] = this);
-            } else {
-                this.id = Math.random().toString();
-                console.log(this);
+            // if (this.id) {
+            const existingProductsIndex = products.findIndex(
+                (prod: any) => prod.id === this.id
+            );
 
-                products.push(this);
-                fs.writeFile(
-                    PRODUCTS_JSON_PATH,
-                    JSON.stringify(products),
-                    (err) => {
-                        console.log(err, "?");
-                    }
-                );
-            }
+            const updatedProducts = [...products];
+            updatedProducts[existingProductsIndex] = this;
+            fs.writeFile(
+                PRODUCTS_JSON_PATH,
+                JSON.stringify(updatedProducts),
+                (err) => {
+                    console.error(err);
+                }
+            );
+            // } else {
+            //     this.id = Math.random().toString();
+            //     console.log(this);
+
+            //     products.push(this);
+            //     fs.writeFile(
+            //         PRODUCTS_JSON_PATH,
+            //         JSON.stringify(products),
+            //         (err) => {
+            //             console.log(err, "?");
+            //         }
+            //     );
+            // }
         });
     }
 
