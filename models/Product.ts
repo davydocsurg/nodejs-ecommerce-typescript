@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import { PRODUCTS_JSON_PATH } from "../utils/constants";
 
 export interface Products {
@@ -10,7 +9,7 @@ export interface Products {
     price: number;
 }
 
-let products: Products[];
+// let products: Products[];
 
 const fetchProductsFromFile = (cb: Function) => {
     //console.log(p);
@@ -33,12 +32,13 @@ export class Product {
     price?: number;
 
     constructor(
-        // id?: string,
+        id?: string,
         title?: string,
         imageUrl?: string,
         description?: string,
         price?: number
     ) {
+        this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
         this.description = description;
@@ -51,9 +51,19 @@ export class Product {
                 const existingProductsIndex = products.findIndex(
                     (prod: any) => prod.id === this.id
                 );
+
                 const updatedProducts = [...products];
-                return (updatedProducts[existingProductsIndex] = this);
+                updatedProducts[existingProductsIndex] = this;
+                fs.writeFile(
+                    PRODUCTS_JSON_PATH,
+                    JSON.stringify(updatedProducts),
+                    (err) => {
+                        console.error(err);
+                    }
+                );
             } else {
+                console.log("no id");
+
                 this.id = Math.random().toString();
                 console.log(this);
 
@@ -76,6 +86,16 @@ export class Product {
     static findById(id: string, cb: Function) {
         fetchProductsFromFile((products: Array<Products>) => {
             const product = products.find((product) => product.id == id.trim());
+            cb(product);
+        });
+    }
+
+    static deleteById(id: string, cb: Function) {
+        fetchProductsFromFile((products: Array<Products>) => {
+            const updatedProduct = products.filter(
+                (prod) => prod.id !== id.trim()
+            );
+
             cb(product);
         });
     }
