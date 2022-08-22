@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { CART_JSON_PATH } from "../utils/constants";
+import { CART_JSON_PATH, PRODUCTS_JSON_PATH } from "../utils/constants";
 import { Product, Products } from "./Product";
 
 // interface existingProds{};
@@ -62,5 +62,35 @@ export class Cart {
     static calcTotalPrice(cart: any, productPrice: number) {
         let totalPrice = (cart.totalPrice += productPrice);
         return totalPrice;
+    }
+
+    static deleteProduct(id: string, productPrice: number) {
+        console.log(id, productPrice);
+
+        fs.readFile(PRODUCTS_JSON_PATH, (err: any, fileContent) => {
+            if (err) {
+                return;
+            }
+
+            const updatedCart = { ...fileContent };
+            console.log(updatedCart, "updates");
+
+            const product = updatedCart.products.find(
+                (prod: any) => prod.id === id
+            );
+            const productQty = product.qty;
+            updatedCart.products = updatedCart.products.filter(
+                (prod: any) => prod.id !== id
+            );
+            updatedCart.totalPrice =
+                updatedCart.totalPrice - productPrice * productQty;
+            fs.writeFile(
+                PRODUCTS_JSON_PATH,
+                JSON.stringify(updatedCart),
+                (err) => {
+                    console.log(err);
+                }
+            );
+        });
     }
 }

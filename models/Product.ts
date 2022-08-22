@@ -1,5 +1,6 @@
 import fs from "fs";
 import { PRODUCTS_JSON_PATH } from "../utils/constants";
+import { Cart } from "./Cart";
 
 export interface Products {
     id?: string;
@@ -90,11 +91,18 @@ export class Product {
 
     static deleteById(id: string, cb: Function) {
         fetchProductsFromFile((products: Array<Products>) => {
-            const updatedProduct = products.filter(
-                (prod) => prod.id !== id.trim()
-            );
+            const product = products.find((prod) => prod.id === id);
+            const updatedProducts = products.filter((prod) => prod.id !== id);
 
-            cb(product);
+            fs.writeFile(
+                PRODUCTS_JSON_PATH,
+                JSON.stringify(updatedProducts),
+                (err) => {
+                    if (!err) {
+                        Cart.deleteProduct(id, product?.price);
+                    }
+                }
+            );
         });
     }
 }

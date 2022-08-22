@@ -5,6 +5,7 @@ import {
     getProducts,
     getEditProductPage,
     updateProduct,
+    deleteProduct,
 } from "../controllers/AdminController";
 // locals
 const adminRoutes = express.Router();
@@ -17,5 +18,6 @@ adminRoutes.get("/products", getProducts);
 // POST routes
 adminRoutes.post(`/add-product`, createProduct);
 adminRoutes.post(`/edit-product`, updateProduct);
+adminRoutes.post(`/delete-product`, deleteProduct);
 
 export default adminRoutes;

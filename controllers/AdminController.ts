@@ -100,3 +100,10 @@ export const getProducts = (
 const returnToHome = (res: Response) => {
     return res.redirect("/");
 };
+
+export const deleteProduct = (req: Request, res: Response, next: Function) => {
+    const prodId = req.body.productId;
+    const productPrice = req.body.price;
+    Product.deleteById(prodId, productPrice);
+    res.redirect("/admin/products");
+};
