@@ -76,7 +76,7 @@ export class Cart {
             console.log(updatedCart, "updates");
 
             const product = updatedCart.products.find(
-                (prod: any) => prod.id === id
+                (prod: any) => prod.id == id
             );
             const productQty = product.qty;
             updatedCart.products = updatedCart.products.filter(
