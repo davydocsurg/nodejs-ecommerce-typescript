@@ -47,8 +47,6 @@ export const createProduct = (
     res: Response,
     next: NextFunction
 ) => {
-    console.log("creating...");
-
     const title = req.body.title;
     const price = req.body.price;
     const imageUrl = req.body.imageUrl;
@@ -104,6 +102,8 @@ const returnToHome = (res: Response) => {
 export const deleteProduct = (req: Request, res: Response, next: Function) => {
     const prodId = req.body.productId;
     const productPrice = req.body.price;
-    Product.deleteById(prodId, productPrice);
+    console.log(productPrice, "from controller");
+
+    Product.deleteById(prodId);
     res.redirect("/admin/products");
 };
