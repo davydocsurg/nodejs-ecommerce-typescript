@@ -1,4 +1,5 @@
 import { Product, Products } from "../models/Product";
+import express, { Request, Response } from "express";
 import { Cart } from "../models/Cart";
 
 export const getProducts = (req: any, res: any, next: any) => {
@@ -36,10 +37,29 @@ export const getProductsIndex = (req: any, res: any, next: any) => {
     });
 };
 
-export const getCart = (req: any, res: any, next: any) => {
-    res.render("shop/cart", {
-        path: "/cart",
-        pageTitle: "Your Cart",
+export const getCart = (req: Request, res: Response, next: Function) => {
+    Cart.getCart((cart: Array) => {
+        Product.fetchAll((products: [Object]) => {
+            const cartProducts = [];
+
+            for (p of products) {
+                const cartProductData = cart.products.find(
+                    (prod: any) => prod.id === p.id
+                );
+                if (cart.products.find((prod: any) => prod.id === p.id)) {
+                    cartProducts.push({
+                        productData: p,
+                        qty: cartProductData.qty,
+                    });
+                }
+            }
+
+            res.render("shop/cart", {
+                path: "/cart",
+                pageTitle: "Your Cart",
+                products: cartProducts,
+            });
+        });
     });
 };
 
