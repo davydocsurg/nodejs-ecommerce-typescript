@@ -96,6 +96,8 @@ export class Cart {
                 cb(null);
             } else {
                 cb(cart);
+                // return cart;
+                console.log(cart);
             }
         });
     }

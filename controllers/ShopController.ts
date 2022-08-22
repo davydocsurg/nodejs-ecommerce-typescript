@@ -38,21 +38,34 @@ export const getProductsIndex = (req: any, res: any, next: any) => {
 };
 
 export const getCart = (req: Request, res: Response, next: Function) => {
-    Cart.getCart((cart: Array) => {
-        Product.fetchAll((products: [Object]) => {
-            const cartProducts = [];
+    Cart.getCart((cart: any) => {
+        Product.fetchAll((products: any) => {
+            let cartProducts = [];
 
-            for (p of products) {
-                const cartProductData = cart.products.find(
-                    (prod: any) => prod.id === p.id
+            console.log(cart.products[0].id, "knkebfb");
+            console.log(0.6390838178360314 === 0.6390838178360314);
+
+            for (let product of products) {
+                // console.log(product.id, "prodId");
+
+                console.log(
+                    product.id === cart.products[0].id,
+                    "prod, cart check"
                 );
-                if (cart.products.find((prod: any) => prod.id === p.id)) {
+
+                const cartProductData = cart.products.find(
+                    (prod: any) => prod.id === product.id
+                );
+                console.log(product.id, "mlefllf");
+                // console.log(cartProductData, "lknfkfnj");
+                if (cart.products.find((prod: any) => prod.id === product.id)) {
                     cartProducts.push({
-                        productData: p,
+                        productData: product,
                         qty: cartProductData.qty,
                     });
                 }
             }
+            // console.log(cartProducts);
 
             res.render("shop/cart", {
                 path: "/cart",
@@ -69,6 +82,18 @@ export const postCart = (req: any, res: any, next: any) => {
         return Cart.addProduct(prodId, product.price);
     });
     res.redirect("/cart");
+};
+
+export const removeProductFromCart = (
+    req: Request,
+    res: Response,
+    next: Function
+) => {
+    const prodId = req.body.productId;
+    Product.findById(prodId, (product: any) => {
+        Cart.deleteProduct(prodId, product.price);
+        res.redirect("/cart");
+    });
 };
 
 export const getOrders = (req: any, res: any, next: any) => {
