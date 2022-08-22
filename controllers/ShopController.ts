@@ -38,7 +38,7 @@ export const getProductsIndex = (req: any, res: any, next: any) => {
 };
 
 export const getCart = (req: Request, res: Response, next: Function) => {
-    Cart.getCart((cart: Array) => {
+    Cart.getCart((cart: any) => {
         Product.fetchAll((products: [Object]) => {
             const cartProducts = [];
 
