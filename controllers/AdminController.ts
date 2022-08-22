@@ -50,11 +50,11 @@ export const createProduct = (
     console.log("creating...");
 
     const title = req.body.title;
+    const price = req.body.price;
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
-    const price = req.body.price;
 
-    const product = new Product(null, title, imageUrl, description, price);
+    const product = new Product(title, price, imageUrl, description);
     product.save();
     res.redirect("/");
 };
@@ -72,9 +72,9 @@ export const updateProduct = (
 
     const updateProduct = new Product(
         prodId,
-        updatedImageUrl,
-        updatedPrice,
         updatedTitle,
+        updatedPrice,
+        updatedImageUrl,
         updatedDesc
     );
     console.log(updateProduct);

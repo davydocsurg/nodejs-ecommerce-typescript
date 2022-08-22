@@ -34,15 +34,15 @@ export class Product {
     constructor(
         id?: string,
         title?: string,
+        price?: number,
         imageUrl?: string,
-        description?: string,
-        price?: number
+        description?: string
     ) {
         this.id = id;
         this.title = title;
+        this.price = price;
         this.imageUrl = imageUrl;
         this.description = description;
-        this.price = price;
     }
 
     save() {
@@ -62,8 +62,6 @@ export class Product {
                     }
                 );
             } else {
-                console.log("no id");
-
                 this.id = Math.random().toString();
                 console.log(this);
 
