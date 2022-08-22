@@ -67,30 +67,36 @@ export class Cart {
     static deleteProduct(id: string, productPrice: number) {
         console.log(id, productPrice);
 
-        fs.readFile(PRODUCTS_JSON_PATH, (err: any, fileContent) => {
+        fs.readFile(CART_JSON_PATH, (err: any, fileContent) => {
             if (err) {
                 return;
             }
 
-            const updatedCart = { ...fileContent };
-            console.log(updatedCart, "updates");
-
+            const updatedCart = { ...JSON.parse(fileContent.toString()) };
             const product = updatedCart.products.find(
-                (prod: any) => prod.id == id
+                (prod: any) => prod.id === id
             );
+            console.log(product, "jbjvvhvcv");
             const productQty = product.qty;
             updatedCart.products = updatedCart.products.filter(
                 (prod: any) => prod.id !== id
             );
             updatedCart.totalPrice =
                 updatedCart.totalPrice - productPrice * productQty;
-            fs.writeFile(
-                PRODUCTS_JSON_PATH,
-                JSON.stringify(updatedCart),
-                (err) => {
-                    console.log(err);
-                }
-            );
+            fs.writeFile(CART_JSON_PATH, JSON.stringify(updatedCart), (err) => {
+                console.error(err);
+            });
+        });
+    }
+
+    static getCart(cb: Function) {
+        fs.readFile(CART_JSON_PATH, (err, fileContent) => {
+            const cart = JSON.parse(fileContent.toString());
+            if (err) {
+                cb(null);
+            } else {
+                cb(cart);
+            }
         });
     }
 }

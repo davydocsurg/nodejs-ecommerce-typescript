@@ -33,13 +33,13 @@ export class Product {
     price?: number;
 
     constructor(
-        id?: string,
+        // id?: string,
         title?: string,
         price?: number,
         imageUrl?: string,
         description?: string
     ) {
-        this.id = id;
+        // this.id = id;
         this.title = title;
         this.price = price;
         this.imageUrl = imageUrl;
@@ -48,33 +48,33 @@ export class Product {
 
     save() {
         fetchProductsFromFile((products: any) => {
-            if (this.id) {
-                const existingProductsIndex = products.findIndex(
-                    (prod: any) => prod.id === this.id
-                );
+            // if (this.id) {
+            //     const existingProductsIndex = products.findIndex(
+            //         (prod: any) => prod.id === this.id
+            //     );
 
-                const updatedProducts = [...products];
-                updatedProducts[existingProductsIndex] = this;
-                fs.writeFile(
-                    PRODUCTS_JSON_PATH,
-                    JSON.stringify(updatedProducts),
-                    (err) => {
-                        console.error(err);
-                    }
-                );
-            } else {
-                this.id = Math.random().toString();
-                console.log(this);
+            //     const updatedProducts = [...products];
+            //     updatedProducts[existingProductsIndex] = this;
+            //     return fs.writeFile(
+            //         PRODUCTS_JSON_PATH,
+            //         JSON.stringify(updatedProducts),
+            //         (err) => {
+            //             console.error(err);
+            //         }
+            //     );
+            // }
+            this.id = Math.random().toString();
+            console.log("this");
+            console.log(this);
 
-                products.push(this);
-                fs.writeFile(
-                    PRODUCTS_JSON_PATH,
-                    JSON.stringify(products),
-                    (err) => {
-                        console.log(err, "?");
-                    }
-                );
-            }
+            products.push(this);
+            fs.writeFile(
+                PRODUCTS_JSON_PATH,
+                JSON.stringify(products),
+                (err) => {
+                    console.log(err, "?");
+                }
+            );
         });
     }
 
@@ -89,10 +89,11 @@ export class Product {
         });
     }
 
-    static deleteById(id: string, cb: Function) {
+    static deleteById(id: string) {
         fetchProductsFromFile((products: Array<Products>) => {
             const product = products.find((prod) => prod.id === id);
             const updatedProducts = products.filter((prod) => prod.id !== id);
+            console.log("from deleteById");
 
             fs.writeFile(
                 PRODUCTS_JSON_PATH,
@@ -101,6 +102,7 @@ export class Product {
                     if (!err) {
                         Cart.deleteProduct(id, product?.price);
                     }
+                    console.error(err);
                 }
             );
         });
