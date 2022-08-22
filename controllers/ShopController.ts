@@ -42,30 +42,19 @@ export const getCart = (req: Request, res: Response, next: Function) => {
         Product.fetchAll((products: any) => {
             let cartProducts = [];
 
-            console.log(cart.products[0].id, "knkebfb");
-            console.log(0.6390838178360314 === 0.6390838178360314);
-
             for (let product of products) {
-                // console.log(product.id, "prodId");
-
-                console.log(
-                    product.id === cart.products[0].id,
-                    "prod, cart check"
-                );
-
                 const cartProductData = cart.products.find(
-                    (prod: any) => prod.id === product.id
+                    (prod: any) => +prod.id === +product.id
                 );
-                console.log(product.id, "mlefllf");
-                // console.log(cartProductData, "lknfkfnj");
-                if (cart.products.find((prod: any) => prod.id === product.id)) {
+                if (
+                    cart.products.find((prod: any) => +prod.id === +product.id)
+                ) {
                     cartProducts.push({
                         productData: product,
                         qty: cartProductData.qty,
                     });
                 }
             }
-            // console.log(cartProducts);
 
             res.render("shop/cart", {
                 path: "/cart",
