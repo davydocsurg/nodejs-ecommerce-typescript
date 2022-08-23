@@ -1,4 +1,5 @@
 import { Product, Products } from "../models/Product";
+import express, { Request, Response } from "express";
 import { Cart } from "../models/Cart";
 
 export const getProducts = (req: any, res: any, next: any) => {
@@ -36,10 +37,31 @@ export const getProductsIndex = (req: any, res: any, next: any) => {
     });
 };
 
-export const getCart = (req: any, res: any, next: any) => {
-    res.render("shop/cart", {
-        path: "/cart",
-        pageTitle: "Your Cart",
+export const getCart = (req: Request, res: Response, next: Function) => {
+    Cart.getCart((cart: any) => {
+        Product.fetchAll((products: any) => {
+            let cartProducts = [];
+
+            for (let product of products) {
+                const cartProductData = cart.products.find(
+                    (prod: any) => +prod.id === +product.id
+                );
+                if (
+                    cart.products.find((prod: any) => +prod.id === +product.id)
+                ) {
+                    cartProducts.push({
+                        productData: product,
+                        qty: cartProductData.qty,
+                    });
+                }
+            }
+
+            res.render("shop/cart", {
+                path: "/cart",
+                pageTitle: "Your Cart",
+                products: cartProducts,
+            });
+        });
     });
 };
 
@@ -49,6 +71,18 @@ export const postCart = (req: any, res: any, next: any) => {
         return Cart.addProduct(prodId, product.price);
     });
     res.redirect("/cart");
+};
+
+export const removeProductFromCart = (
+    req: Request,
+    res: Response,
+    next: Function
+) => {
+    const prodId = req.body.productId;
+    Product.findById(prodId, (product: any) => {
+        Cart.deleteProduct(prodId, product.price);
+        res.redirect("/cart");
+    });
 };
 
 export const getOrders = (req: any, res: any, next: any) => {

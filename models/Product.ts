@@ -20,7 +20,7 @@ const fetchProductsFromFile = (cb: Function) => {
             return cb([]);
         }
         let data = JSON.parse(fileContent.toString());
-
+        // return data;
         cb(data);
     });
 };
