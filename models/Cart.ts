@@ -74,12 +74,14 @@ export class Cart {
 
             const updatedCart = { ...JSON.parse(fileContent.toString()) };
             const product = updatedCart.products.find(
-                (prod: any) => prod.id === id
+                (prod: any) => +prod.id === +id
             );
-            console.log(product, "jbjvvhvcv");
+            if (!product) {
+                return;
+            }
             const productQty = product.qty;
             updatedCart.products = updatedCart.products.filter(
-                (prod: any) => prod.id !== id
+                (prod: any) => +prod.id !== +id
             );
             updatedCart.totalPrice =
                 updatedCart.totalPrice - productPrice * productQty;
@@ -96,8 +98,6 @@ export class Cart {
                 cb(null);
             } else {
                 cb(cart);
-                // return cart;
-                console.log(cart);
             }
         });
     }
