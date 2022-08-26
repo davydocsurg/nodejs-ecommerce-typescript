@@ -8,7 +8,20 @@ import shopRoutes from "./routes/shop";
 import adminRoutes from "./routes/admin";
 import { get404 } from "./controllers/ErrorController";
 
+// database
+import * as MySQLConnector from "./utils/mysql.database";
+
 const app = express();
+
+MySQLConnector.init();
+
+// db.execute("SELECT * FROM products")
+//     .then((result: any) => {
+//         console.log(result);
+//     })
+//     .catch((err: any) => {
+//         console.error(err);
+//     });
 
 app.set("view engine", "ejs");
 // app.set("views", "views");
