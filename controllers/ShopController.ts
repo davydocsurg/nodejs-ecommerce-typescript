@@ -18,17 +18,17 @@ export const getProducts = (req: any, res: any, next: any) => {
 
 export const getProduct = (req: any, res: any, next: any) => {
     const prodId = req.params.id;
-    Product.findById(prodId, (product: any) => {
-        res.render("shop/product-detail", {
-            product: product,
-            pageTitle: product.title ? product.title : "Product",
-            path: "/products",
+    Product.findById(prodId)
+        .then(([product]) => {
+            res.render("shop/product-detail", {
+                product: product[0],
+                pageTitle: product.title ? product.title : "Product",
+                path: "/products",
+            });
+        })
+        .catch((err) => {
+            console.error(err);
         });
-
-        // res.json({
-        //     res: product.title,
-        // });
-    });
 };
 
 export const getProductsIndex = (req: any, res: any, next: any) => {

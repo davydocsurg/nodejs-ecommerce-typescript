@@ -53,8 +53,14 @@ export const createProduct = (
     const description = req.body.description;
 
     const product = new Product(title, price, imageUrl, description);
-    product.save();
-    res.redirect("/");
+    product
+        .save()
+        .then(() => {
+            res.redirect("/");
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 };
 
 export const updateProduct = (
