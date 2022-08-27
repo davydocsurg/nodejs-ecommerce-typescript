@@ -12,3 +12,9 @@ export const db = process.env.MYSQL_DB_NAME;
 export const pwd = process.env.MYSQL_DB_PASSWORD;
 export const port = process.env.MYSQL_DB_PORT;
 export const dbConnection = process.env.MY_SQL_DB_CONNECTION_LIMIT;
+
+// database queries
+export const fetchAllProducts = "SELECT * FROM products";
+export const createProduct =
+    "INSERT INTO products (title, price, imageUrl, description) VALUES (?,?,?,?)";
+export const fetchProductById = "SELECT * FROM products WHERE products.id = ?";

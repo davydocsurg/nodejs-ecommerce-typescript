@@ -1,13 +1,20 @@
 import mysql from "mysql2";
+import { Sequelize } from "sequelize/types";
 import { db, dbConnection, dbHost, dbUser, port, pwd } from "./constants";
 
-const dbPool = mysql.createPool({
-    connectionLimit: dbConnection,
+export const sequelize = new Sequelize("node-ts", "root", "root", {
+    dialect: "mysql",
     host: dbHost,
-    user: dbUser,
-    password: pwd,
-    database: db,
     port: port,
 });
 
-module.exports = dbPool.promise();
+// const dbPool = mysql.createPool({
+//     connectionLimit: dbConnection,
+//     host: dbHost,
+//     user: dbUser,
+//     password: pwd,
+//     database: db,
+//     port: port,
+// });
+
+// module.exports = dbPool.promise();

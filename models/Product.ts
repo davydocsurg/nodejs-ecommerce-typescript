@@ -1,5 +1,10 @@
 import fs from "fs";
-import { PRODUCTS_JSON_PATH } from "../utils/constants";
+import {
+    createProduct,
+    fetchProducts,
+    fetchProductById,
+    PRODUCTS_JSON_PATH,
+} from "../utils/constants";
 import { Cart } from "./Cart";
 const db = require("../utils/db");
 
@@ -48,18 +53,20 @@ export class Product {
     }
 
     save() {
-        return db.execute(
-            `INSERT INTO products (title, price, imageUrl, description) VALUES (?,?,?,?)`,
-            [this.title, this.price, this.imageUrl, this.description]
-        );
+        return db.execute(createProduct, [
+            this.title,
+            this.price,
+            this.imageUrl,
+            this.description,
+        ]);
     }
 
     static fetchAll() {
-        return db.execute("SELECT * FROM products");
+        return db.execute(fetchProducts);
     }
 
     static findById(id: any) {
-        return db.execute(`SELECT * FROM products WHERE products.id = ?`, [id]);
+        return db.execute(fetchProductById, [id]);
     }
 
     static deleteById(id: string) {
