@@ -1,6 +1,7 @@
 import fs from "fs";
 import { PRODUCTS_JSON_PATH } from "../utils/constants";
 import { Cart } from "./Cart";
+const db = require("../utils/db");
 
 export interface Products {
     id?: string;
@@ -47,46 +48,18 @@ export class Product {
     }
 
     save() {
-        fetchProductsFromFile((products: any) => {
-            // if (this.id) {
-            //     const existingProductsIndex = products.findIndex(
-            //         (prod: any) => prod.id === this.id
-            //     );
-
-            //     const updatedProducts = [...products];
-            //     updatedProducts[existingProductsIndex] = this;
-            //     return fs.writeFile(
-            //         PRODUCTS_JSON_PATH,
-            //         JSON.stringify(updatedProducts),
-            //         (err) => {
-            //             console.error(err);
-            //         }
-            //     );
-            // }
-            this.id = Math.random().toString();
-            console.log("this");
-            console.log(this);
-
-            products.push(this);
-            fs.writeFile(
-                PRODUCTS_JSON_PATH,
-                JSON.stringify(products),
-                (err) => {
-                    console.log(err, "?");
-                }
-            );
-        });
+        return db.execute(
+            `INSERT INTO products (title, price, imageUrl, description) VALUES (?,?,?,?)`,
+            [this.title, this.price, this.imageUrl, this.description]
+        );
     }
 
-    static fetchAll(cb: Function) {
-        fetchProductsFromFile(cb);
+    static fetchAll() {
+        return db.execute("SELECT * FROM products");
     }
 
-    static findById(id: string, cb: Function) {
-        fetchProductsFromFile((products: Array<Products>) => {
-            const product = products.find((product) => product.id == id.trim());
-            cb(product);
-        });
+    static findById(id: any) {
+        return db.execute(`SELECT * FROM products WHERE products.id = ?`, [id]);
     }
 
     static deleteById(id: string) {

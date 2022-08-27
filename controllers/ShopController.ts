@@ -3,38 +3,46 @@ import express, { Request, Response } from "express";
 import { Cart } from "../models/Cart";
 
 export const getProducts = (req: any, res: any, next: any) => {
-    Product.fetchAll((products: Object) => {
-        res.render("shop/product-list", {
-            prods: products,
-            pageTitle: "All Products",
-            path: "/products",
+    Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render("shop/product-list", {
+                prods: rows,
+                pageTitle: "All Products",
+                path: "/products",
+            });
+        })
+        .catch((err) => {
+            console.error(err);
         });
-    });
 };
 
 export const getProduct = (req: any, res: any, next: any) => {
     const prodId = req.params.id;
-    Product.findById(prodId, (product: any) => {
-        res.render("shop/product-detail", {
-            product: product,
-            pageTitle: product.title ? product.title : "Product",
-            path: "/products",
+    Product.findById(prodId)
+        .then(([product]) => {
+            res.render("shop/product-detail", {
+                product: product[0],
+                pageTitle: product.title ? product.title : "Product",
+                path: "/products",
+            });
+        })
+        .catch((err) => {
+            console.error(err);
         });
-
-        // res.json({
-        //     res: product.title,
-        // });
-    });
 };
 
 export const getProductsIndex = (req: any, res: any, next: any) => {
-    Product.fetchAll((products: Object) => {
-        res.render("shop/index", {
-            prods: products,
-            pageTitle: "Shop",
-            path: "/",
+    Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render("shop/product-list", {
+                prods: rows,
+                pageTitle: "All Products",
+                path: "/",
+            });
+        })
+        .catch((err) => {
+            console.error(err);
         });
-    });
 };
 
 export const getCart = (req: Request, res: Response, next: Function) => {
