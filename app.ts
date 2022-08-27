@@ -1,6 +1,12 @@
 import path from "path";
 import http from "http";
-import express, { Express } from "express";
+import express, {
+    Express,
+    RequestHandler,
+    Request,
+    Response,
+    NextFunction,
+} from "express";
 import bodyParser from "body-parser";
 
 // locals
@@ -10,10 +16,12 @@ import { get404 } from "./controllers/ErrorController";
 
 // database
 import * as MySQLConnector from "./utils/mysql.database";
+import * as ProductService from "./products/products.services";
+const db = require("./utils/db");
 
 const app = express();
 
-MySQLConnector.init();
+// MySQLConnector.init();
 
 // db.execute("SELECT * FROM products")
 //     .then((result: any) => {

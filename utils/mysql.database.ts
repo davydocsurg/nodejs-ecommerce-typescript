@@ -1,7 +1,16 @@
 import { Pool, createPool } from "mysql";
+import mysql from "mysql2";
 import { dbHost, dbUser, db, pwd, dbConnection } from "./constants";
 
 let pool: Pool;
+
+// pool = createPool({
+//     connectionLimit: dbConnection,
+//     host: dbHost,
+//     user: dbUser,
+//     password: pwd,
+//     database: db,
+// });
 
 export const init = () => {
     try {
@@ -49,12 +58,3 @@ export const execute = <T>(
         throw new Error("failed to execute MySQL query");
     }
 };
-
-// const dbPool = mysql.createPool({
-//     host: dbHost,
-//     user: dbUser,
-//     database: db,
-//     password: pwd,
-// });
-
-// module.exports = dbPool.promise();
