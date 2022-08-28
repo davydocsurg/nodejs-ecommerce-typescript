@@ -3,10 +3,10 @@ import express, { Request, Response } from "express";
 import { Cart } from "../models/Cart";
 
 export const getProducts = (req: any, res: any, next: any) => {
-    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+    Product.findAll()
+        .then((products) => {
             res.render("shop/product-list", {
-                prods: rows,
+                prods: products,
                 pageTitle: "All Products",
                 path: "/products",
             });
@@ -32,10 +32,10 @@ export const getProduct = (req: any, res: any, next: any) => {
 };
 
 export const getProductsIndex = (req: any, res: any, next: any) => {
-    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+    Product.findAll()
+        .then((products) => {
             res.render("shop/product-list", {
-                prods: rows,
+                prods: products,
                 pageTitle: "All Products",
                 path: "/",
             });

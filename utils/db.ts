@@ -1,8 +1,8 @@
 import mysql from "mysql2";
-import { Sequelize } from "sequelize/types";
+import { Sequelize } from "sequelize";
 import { db, dbConnection, dbHost, dbUser, port, pwd } from "./constants";
 
-export const sequelize = new Sequelize("node-ts", "root", "root", {
+export const sequelize = new Sequelize("node-test", "root", "root", {
     dialect: "mysql",
     host: dbHost,
     port: port,

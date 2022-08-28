@@ -52,15 +52,27 @@ export const createProduct = (
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
 
-    const product = new Product(title, price, imageUrl, description);
-    product
-        .save()
-        .then(() => {
-            res.redirect("/");
+    // const product = new Product(title, price, imageUrl, description);
+    Product.create({
+        title: title,
+        price: price,
+        imageUrl: imageUrl,
+        description: description,
+    })
+        .then((res) => {
+            console.log(res);
         })
         .catch((err) => {
             console.error(err);
         });
+    // product
+    //     .save()
+    //     .then(() => {
+    //         res.redirect("/");
+    //     })
+    //     .catch((err) => {
+    //         console.error(err);
+    //     });
 };
 
 export const updateProduct = (

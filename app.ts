@@ -18,6 +18,9 @@ import { get404 } from "./controllers/ErrorController";
 import * as MySQLConnector from "./utils/mysql.database";
 import * as ProductService from "./products/products.services";
 const db = require("./utils/db");
+import { sequelize } from "./utils/db";
+
+const port = process.env.APP_PORT || 3001;
 
 const app = express();
 
@@ -46,5 +49,13 @@ app.use(get404);
 // const routes = require("./routes");
 
 // const server = http.createServer(routes);
-
-app.listen(3001);
+sequelize
+    .sync()
+    .then(() => {
+        app.listen(port, () => {
+            console.log(`App listening on port ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error(err);
+    });

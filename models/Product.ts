@@ -1,4 +1,4 @@
-import { Model } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../utils/db";
 
 interface ProductDetails {
@@ -9,58 +9,81 @@ interface ProductDetails {
     price: number;
 }
 
-module.exports = (DataTypes: any) => {
-    class Product extends Model<ProductDetails> implements ProductDetails {
-        id!: string;
-        title!: string;
-        imageUrl!: string;
-        description!: string;
-        price!: number;
-    }
+export const Product = sequelize.define("products", {
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+    },
 
-    Product.init(
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                primaryKey: true,
-                autoIncrement: true,
-            },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 
-            title: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
+    imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 
-            imageUrl: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
+    description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 
-            description: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
+    price: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+});
 
-            price: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-        },
-        {
-            sequelize,
-            modelName: "Product",
-        }
-    );
+// module.exports = (DataTypes: any) => {
+// export class Product extends Model<ProductDetails> implements ProductDetails {
+//     id!: string;
+//     title!: string;
+//     imageUrl!: string;
+//     description!: string;
+//     price!: number;
+// }
 
-    return Product;
-};
+// Product.init(
+//     {
+//         id: {
+//             type: DataTypes.INTEGER,
+//             allowNull: false,
+//             primaryKey: true,
+//             autoIncrement: true,
+//         },
 
-// const Product=sequelize.define('products',{
-//      id:{
-//         type:Sequelize.
-//      }
-// })
+//         title: {
+//             type: DataTypes.STRING,
+//             allowNull: false,
+//         },
+
+//         imageUrl: {
+//             type: DataTypes.STRING,
+//             allowNull: false,
+//         },
+
+//         description: {
+//             type: DataTypes.STRING,
+//             allowNull: false,
+//         },
+
+//         price: {
+//             type: DataTypes.STRING,
+//             allowNull: false,
+//         },
+//     },
+//     {
+//         sequelize,
+//         modelName: "Product",
+//     }
+// );
+
+// return Product;
+// };
 
 // import fs from "fs";
 // import {
