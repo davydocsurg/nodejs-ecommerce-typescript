@@ -21,6 +21,8 @@ import { sequelize } from "./utils/db";
 // models
 import { Product } from "./models/Product";
 import { User } from "./models/User";
+import { Cart } from "./models/Cart";
+import { CartItem } from "./models/CartItem";
 
 const port = process.env.APP_PORT || 3001;
 
@@ -47,11 +49,22 @@ app.use(shopRoutes);
 
 app.use(get404);
 
+// database relationships
+
+// user-product
 Product.belongsTo(User, {
     constraints: true,
     onDelete: "CASCADE",
 });
 User.hasMany(Product);
+
+// user-cart
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+// cart-product
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 sequelize
     .sync()
@@ -63,6 +76,9 @@ sequelize
             return User.create({ name: "David", email: "david@email.com" });
         }
         return user;
+    })
+    .then((user) => {
+        return user.createCart();
     })
     .then((user) => {
         console.log(user);
