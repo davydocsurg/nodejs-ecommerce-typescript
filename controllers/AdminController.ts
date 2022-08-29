@@ -53,14 +53,13 @@ export const createProduct = (
     const price = req.body.price;
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
-
-    // const product = new Product(title, price, imageUrl, description);
-    Product.create({
-        title: title,
-        price: price,
-        imageUrl: imageUrl,
-        description: description,
-    })
+    req.user
+        .createProduct({
+            title: title,
+            price: price,
+            imageUrl: imageUrl,
+            description: description,
+        })
         .then((res) => {
             console.log(res);
         })

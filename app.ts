@@ -6,6 +6,7 @@ import express, {
     Request,
     Response,
     NextFunction,
+    response,
 } from "express";
 import bodyParser from "body-parser";
 
@@ -15,43 +16,57 @@ import adminRoutes from "./routes/admin";
 import { get404 } from "./controllers/ErrorController";
 
 // database
-import * as MySQLConnector from "./utils/mysql.database";
-import * as ProductService from "./products/products.services";
-const db = require("./utils/db");
 import { sequelize } from "./utils/db";
+
+// models
+import { Product } from "./models/Product";
+import { User } from "./models/User";
 
 const port = process.env.APP_PORT || 3001;
 
 const app = express();
 
-// MySQLConnector.init();
-
-// db.execute("SELECT * FROM products")
-//     .then((result: any) => {
-//         console.log(result);
-//     })
-//     .catch((err: any) => {
-//         console.error(err);
-//     });
-
 app.set("view engine", "ejs");
-// app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+    User.findByPk(1)
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use(get404);
 
-// customs
-// const routes = require("./routes");
+Product.belongsTo(User, {
+    constraints: true,
+    onDelete: "CASCADE",
+});
+User.hasMany(Product);
 
-// const server = http.createServer(routes);
 sequelize
     .sync()
     .then(() => {
+        return User.findByPk(1);
+    })
+    .then((user) => {
+        if (!user) {
+            return User.create({ name: "David", email: "david@email.com" });
+        }
+        return user;
+    })
+    .then((user) => {
+        console.log(user);
+
         app.listen(port, () => {
             console.log(`App listening on port ${port}`);
         });
