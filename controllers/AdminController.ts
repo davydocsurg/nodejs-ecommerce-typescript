@@ -27,19 +27,21 @@ export const getEditProductPage = (
 
     const prodId = req.params.id;
 
-    Product.findById(prodId, (product: Object) => {
-        if (!product) {
-            returnToHome(res);
-            console.log("no product");
-        }
+    Product.findByPk(prodId)
+        .then((product) => {
+            if (!product) {
+                returnToHome(res);
+                console.log("no product");
+            }
 
-        res.render("admin/edit-product", {
-            pageTitle: "Edit Product",
-            path: "/admin/edit-product",
-            editing: editMode,
-            product: product,
-        });
-    });
+            res.render("admin/edit-product", {
+                pageTitle: "Edit Product",
+                path: "/admin/edit-product",
+                editing: editMode,
+                product: product,
+            });
+        })
+        .catch((err) => {});
 };
 
 export const createProduct = (
@@ -86,17 +88,24 @@ export const updateProduct = (
     const updatedImageUrl = req.body.imageUrl;
     const updatedDesc = req.body.description;
 
-    const updateProduct = new Product(
-        prodId,
-        updatedTitle,
-        updatedPrice,
-        updatedImageUrl,
-        updatedDesc
-    );
-    console.log(updateProduct);
+    Product.findByPk(prodId)
+        .then((product) => {
+            product.title = updatedTitle;
+            product.price = updatedPrice;
+            product.imageUrl = updatedImageUrl;
+            product.description = updatedDesc;
 
-    updateProduct.save();
-    res.redirect("/");
+            return product?.save();
+        })
+        .then((result) => {
+            console.log("UPDATED PRODUCT!");
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
+    // returnToHome(res);
+    res.redirect("/admin/products");
 };
 
 export const getProducts = (
@@ -104,13 +113,17 @@ export const getProducts = (
     res: Response,
     next: NextFunction
 ) => {
-    Product.fetchAll((products: any) => {
-        res.render("admin/products", {
-            prods: products,
-            pageTitle: "All Products",
-            path: "/admin/products",
+    Product.findAll()
+        .then((products) => {
+            res.render("admin/products", {
+                prods: products,
+                pageTitle: "All Products",
+                path: "/admin/products",
+            });
+        })
+        .catch((err) => {
+            console.error(err);
         });
-    });
 };
 
 const returnToHome = (res: Response) => {

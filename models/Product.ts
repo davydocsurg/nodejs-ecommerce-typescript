@@ -126,7 +126,7 @@ export const Product = sequelize.define("products", {
 //     price?: number;
 
 //     constructor(
-//         // id?: string,
+//         id?: string,
 //         title?: string,
 //         price?: number,
 //         imageUrl?: string,
