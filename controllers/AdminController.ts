@@ -67,14 +67,8 @@ export const createProduct = (
         .catch((err) => {
             console.error(err);
         });
-    // product
-    //     .save()
-    //     .then(() => {
-    //         res.redirect("/");
-    //     })
-    //     .catch((err) => {
-    //         console.error(err);
-    //     });
+
+    returnToHome(res);
 };
 
 export const updateProduct = (
@@ -135,6 +129,16 @@ export const deleteProduct = (req: Request, res: Response, next: Function) => {
     const productPrice = req.body.price;
     console.log(productPrice, "from controller");
 
-    Product.deleteById(prodId);
+    Product.findByPk(prodId)
+        .then((product) => {
+            return product?.destroy();
+        })
+        .then((result) => {
+            console.log("product destroyed!");
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
     res.redirect("/admin/products");
 };
