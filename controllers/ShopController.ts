@@ -138,10 +138,21 @@ export const removeProductFromCart = (
     next: Function
 ) => {
     const prodId = req.body.productId;
-    Product.findById(prodId, (product: any) => {
-        Cart.deleteProduct(prodId, product.price);
-        res.redirect("/cart");
-    });
+    req.user
+        .getCart()
+        .then((cart: any) => {
+            return cart.getProducts({ where: { id: prodId } });
+        })
+        .then((products: Array<Object>) => {
+            const product = products[0];
+            return product.cartItem.destroy();
+        })
+        .then((result) => {
+            res.redirect("/cart");
+        })
+        .catch((err: Error) => {
+            console.error(err);
+        });
 };
 
 export const getOrders = (req: any, res: any, next: any) => {
