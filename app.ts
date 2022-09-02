@@ -23,6 +23,8 @@ import { Product } from "./models/Product";
 import { User } from "./models/User";
 import { Cart } from "./models/Cart";
 import { CartItem } from "./models/CartItem";
+import { Order } from "./models/Order";
+import { OrderItem } from "./models/OrderItem";
 
 const port = process.env.APP_PORT || 3001;
 
@@ -65,6 +67,11 @@ Cart.belongsTo(User);
 // cart-product
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+
+// user-order
+User.hasMany(Order);
+Order.belongsTo(User);
+Order.belongsToMany(Product, { through: OrderItem });
 
 sequelize
     .sync()
