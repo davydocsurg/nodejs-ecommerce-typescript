@@ -1,9 +1,9 @@
-import { getDb } from "../utils/db";
 import { ProductDetails } from "../types/product";
 import { Response } from "express";
 import mongoose from "mongoose";
+import slugify from "slugify";
 
-const PropertySchema = new mongoose.Schema(
+const ProductSchema = new mongoose.Schema(
     {
         title: {
             type: String,
@@ -12,6 +12,10 @@ const PropertySchema = new mongoose.Schema(
                 5,
                 "Title is shorter than the minimum allowed length (5)",
             ],
+        },
+        slug: {
+            type: String,
+            trim: true,
         },
         description: {
             type: String,
@@ -34,7 +38,12 @@ const PropertySchema = new mongoose.Schema(
     }
 );
 
-const Product = mongoose.model("Product", PropertySchema);
+ProductSchema.pre("save", async function (next: Function) {
+    this.slug = slugify(this.title, { lower: true });
+    next();
+});
+
+const Product = mongoose.model("Product", ProductSchema);
 
 export default Product;
 

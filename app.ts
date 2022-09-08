@@ -32,7 +32,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use("/admin", adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(get404);
 app.listen(port);

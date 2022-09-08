@@ -5,6 +5,7 @@ class ProductController {
     constructor() {
         this.getAddProductPage = this.getAddProductPage.bind(this);
         this.createProduct = this.createProduct.bind(this);
+        this.getAdminProducts = this.getAdminProducts.bind(this);
         this.returnToHome = this.returnToHome.bind(this);
     }
 
@@ -15,6 +16,15 @@ class ProductController {
             pageTitle: "Add Product",
             path: "/admin/add-product",
             editing: false,
+        });
+    }
+
+    async getAdminProducts(req: Request, res: Response, next: NextFunction) {
+        const products = await Product.find();
+        res.render("admin/products", {
+            prods: products,
+            pageTitle: "All Products",
+            path: "/admin/products",
         });
     }
 

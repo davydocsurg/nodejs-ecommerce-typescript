@@ -1,28 +1,21 @@
 import express from "express";
-import {
-    getCart,
-    getCheckout,
-    getOrders,
-    getProduct,
-    getProducts,
-    getProductsIndex,
-    postCart,
-    postOrder,
-    removeProductFromCart,
-} from "../controllers/ShopController";
+import ShopController from "../controllers/ShopController";
+import { catchAsync } from "../helpers/helper";
 
 const shopRoutes = express.Router();
 
+shopRoutes.route("/products").get(ShopController.getAllProducts);
+
 // shopRoutes.get("/", getProductsIndex);
-// shopRoutes.get("/products/:id", getProduct);
+shopRoutes.route("/products/:id").get(catchAsync(ShopController.getProduct));
 // shopRoutes.get("/products", getProducts);
 // shopRoutes.get("/cart", getCart);
 // shopRoutes.get("/orders", getOrders);
 // shopRoutes.get("/checkout", getCheckout);
 
 // post
-shopRoutes.post("/create-order", postOrder);
-shopRoutes.post("/cart", postCart);
-shopRoutes.post("/cart-delete-item", removeProductFromCart);
+// shopRoutes.post("/create-order", postOrder);
+// shopRoutes.post("/cart", postCart);
+// shopRoutes.post("/cart-delete-item", removeProductFromCart);
 
 export default shopRoutes;
