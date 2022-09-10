@@ -8,7 +8,9 @@ const adminRoutes = express.Router();
 adminRoutes
     .route("/add-product")
     .get(catchAsync(ProductController.getAddProductPage));
-// adminRoutes.get("/edit-product/:id", getEditProductPage);
+adminRoutes
+    .route("/edit-product/:id")
+    .get(catchAsync(ProductController.getProductEditPage));
 adminRoutes
     .route("/products")
     .get(catchAsync(ProductController.getAdminProducts));
@@ -18,6 +20,9 @@ adminRoutes
     .route("/add-product")
     .post(catchAsync(ProductController.createProduct));
 
+adminRoutes
+    .route("/edit-product")
+    .post(catchAsync(ProductController.updateProduct));
 // adminRoutes.post(`/edit-product`, updateProduct);
 // adminRoutes.post(`/delete-product`, deleteProduct);
 

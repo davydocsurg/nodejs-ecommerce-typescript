@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Model, Models } from "mongoose";
 import { AppError } from "../helpers/appError";
-import { catchAsync } from "../helpers/helper";
 
 export const getOne = async (
     Model: Model<Models>,
@@ -17,7 +16,6 @@ export const getOne = async (
     if (!doc) {
         return next(new AppError("No document with that ID was found", 404));
     }
-    console.log(doc);
 
     return doc;
 };
