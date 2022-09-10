@@ -17,14 +17,14 @@ class ShopController {
     }
 
     async getProduct(req: Request, res: Response, next: NextFunction) {
-        getOne(Product)(res, req, next);
-        // console.log(product, "enfkgk");
+        const product = await getOne(Product, req, res, next);
+        // console.log(query);
 
-        // res.render("shop/product-detail", {
-        //     product: product,
-        //     pageTitle: product?.title ? product?.title : "Product",
-        //     path: "/products",
-        // });
+        res.render("shop/product-detail", {
+            product: product,
+            pageTitle: product?.title ? product?.title : "Product",
+            path: "/products",
+        });
     }
 }
 
