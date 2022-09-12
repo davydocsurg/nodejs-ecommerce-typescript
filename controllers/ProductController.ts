@@ -1,6 +1,6 @@
 import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
-import { getOne } from "./HandlerFactory";
+import { deleteOne } from "./HandlerFactory";
 
 class ProductController {
     constructor() {
@@ -11,8 +11,6 @@ class ProductController {
     }
 
     async getAddProductPage(req: Request, res: Response, next: NextFunction) {
-        console.log("ejnkfnknf");
-
         res.render("admin/edit-product", {
             pageTitle: "Add Product",
             path: "/admin/add-product",
@@ -80,6 +78,12 @@ class ProductController {
         };
 
         await Product.findByIdAndUpdate(prodId, updatedData);
+
+        res.redirect("/admin/products");
+    }
+
+    async deleteProduct(req: Request, res: Response, next: NextFunction) {
+        await deleteOne(Product, req, res, next);
 
         res.redirect("/admin/products");
     }

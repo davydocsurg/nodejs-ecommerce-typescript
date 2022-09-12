@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Model, Models } from "mongoose";
+import mongoose, { Model, Models } from "mongoose";
 import { AppError } from "../helpers/appError";
 
 export const getOne = async (
@@ -9,7 +9,7 @@ export const getOne = async (
     next: NextFunction
 ) => {
     const docID = req.params.id;
-    // console.log(docID, "id");
+    // console.log(typeof docID, "id");
 
     const doc = await Model.findById(docID);
 
@@ -18,4 +18,24 @@ export const getOne = async (
     }
 
     return doc;
+};
+
+export const deleteOne = async (
+    Model: Model<Models>,
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const docID = req.body.productId;
+    console.log(docID);
+
+    // if (mongoose.Types.ObjectId.isValid(docID)) {
+    const doc = await Model.findByIdAndDelete(docID);
+    // if (!doc) {
+    //     return next(
+    //         new AppError("No document with that ID was found", 404)
+    //     );
+    // }
+    return doc;
+    // }
 };

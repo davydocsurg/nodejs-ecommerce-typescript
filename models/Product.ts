@@ -1,5 +1,3 @@
-import { ProductDetails } from "../types/product";
-import { Response } from "express";
 import mongoose from "mongoose";
 import slugify from "slugify";
 

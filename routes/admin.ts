@@ -1,5 +1,5 @@
 import express from "express";
-import ProductController from "../controllers/AdminController";
+import ProductController from "../controllers/ProductController";
 import { catchAsync } from "../helpers/helper";
 // locals
 const adminRoutes = express.Router();
@@ -23,7 +23,8 @@ adminRoutes
 adminRoutes
     .route("/edit-product")
     .post(catchAsync(ProductController.updateProduct));
-// adminRoutes.post(`/edit-product`, updateProduct);
-// adminRoutes.post(`/delete-product`, deleteProduct);
+adminRoutes
+    .route("/delete-product")
+    .post(catchAsync(ProductController.deleteProduct));
 
 export default adminRoutes;

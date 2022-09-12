@@ -1,13 +1,37 @@
-import { sequelize } from "../utils/db";
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
+import validator from "validator";
 
-export const User = sequelize.define("user", {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
+const userSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            trim: true,
+            required: [true, "First Name must be provided"],
+            minlength: 3,
+        },
+        username: {
+            type: String,
+            trim: true,
+            required: [true, "Username must be provided"],
+            minlength: 3,
+        },
+        email: {
+            type: String,
+            required: [true, "Email Name must be provided"],
+            unique: true,
+            lowercase: true,
+            trim: true,
+            validate: [validator.isEmail, "Please provide a valid email."],
+        },
     },
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-});
+
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
+
+const User = mongoose.model("User", userSchema);
+
+export default User;
