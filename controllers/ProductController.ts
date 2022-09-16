@@ -19,7 +19,7 @@ class ProductController {
     }
 
     async getAdminProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find();
+        const products = await Product.find().populate("userId");
         res.render("admin/products", {
             prods: products,
             pageTitle: "All Products",
@@ -38,6 +38,7 @@ class ProductController {
             price,
             imageUrl,
             description,
+            userId: req.user,
         });
         console.log(product);
 

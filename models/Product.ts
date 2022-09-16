@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
 
+const Schema = mongoose.Schema;
+
 const ProductSchema = new mongoose.Schema(
     {
         title: {
@@ -26,6 +28,11 @@ const ProductSchema = new mongoose.Schema(
         imageUrl: {
             type: String,
             required: [true, "Image URL is required"],
+        },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
     },
 

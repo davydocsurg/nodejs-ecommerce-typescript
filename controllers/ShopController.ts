@@ -5,10 +5,13 @@ import { getOne } from "./HandlerFactory";
 class ShopController {
     constructor() {
         this.getAllProducts = this.getAllProducts.bind(this);
+        this.getProduct = this.getProduct.bind(this);
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find();
+        const products = await Product.find().populate("userId");
+        console.log(products);
+
         res.render("shop/product-list", {
             prods: products,
             pageTitle: "All Products",

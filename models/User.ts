@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import validator from "validator";
 
+const Schema = mongoose.Schema;
+
 const userSchema = new mongoose.Schema(
     {
         name: {
@@ -22,6 +24,21 @@ const userSchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
             validate: [validator.isEmail, "Please provide a valid email."],
+        },
+        cart: {
+            items: [
+                {
+                    productId: {
+                        type: Schema.Types.ObjectId,
+                        ref: "User",
+                        required: true,
+                    },
+                    quantity: {
+                        type: Number,
+                        required: true,
+                    },
+                },
+            ],
         },
     },
 
