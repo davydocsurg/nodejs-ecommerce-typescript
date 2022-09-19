@@ -1,5 +1,7 @@
-import { sequelize } from "../utils/db";
-import { DataTypes } from "sequelize";
+import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
+import validator from "validator";
+import Product from "./Product";
 
 // interface existingProds{};
 interface updatedProds {
@@ -14,98 +16,25 @@ export interface CartType {
     price: number;
 }
 
-export const Cart = sequelize.define("cart", {
-    id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-});
+export const addProdToCart = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const prodId = req.body.productId;
+    Product.findById(prodId)
+        .then((prod) => {
+            console.log(prod);
 
-// export class Cart {
-//     static addProduct(id: string, productPrice: number) {
-//         // get product details
-//         Product.findById(id, (item: Product) => {
-//             console.log(item.id);
-//         });
+            return req.user.addToCart(prod);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+};
 
-//         // fetch the previous cart
-//         fs.readFile(CART_JSON_PATH, (err: any, fileContent) => {
-//             let cart = { products: [], totalPrice: 0 };
-//             if (!err) {
-//                 cart = JSON.parse(fileContent.toString());
-//             }
+// const Schema = mongoose.Schema;
 
-//             // analyze the cart => find existing product
-//             if (cart.products) {
-//                 const existingProductsIndex = cart.products.findIndex(
-//                     (prod) => prod["id"] === id
-//                 );
-//                 const existingProducts: any =
-//                     cart.products[existingProductsIndex];
-//                 let updatedProducts: any;
-//                 console.log(existingProducts, " rrrrr");
+// const userSchema = new mongoose.Schema({
 
-//                 // add new product/increase quantity
-//                 if (existingProducts) {
-//                     updatedProducts = { ...existingProducts };
-//                     updatedProducts.qty += 1;
-//                     cart.products = [...cart.products];
-//                     cart.products[existingProductsIndex] = updatedProducts;
-//                 } else {
-//                     updatedProducts = { id: id, qty: 1 };
-//                     cart.products = [...cart.products, updatedProducts];
-//                 }
-//                 this.calcTotalPrice(cart, +productPrice);
-
-//                 fs.writeFile(CART_JSON_PATH, JSON.stringify(cart), (err) => {
-//                     console.log(err);
-//                 });
-//             }
-//         });
-//     }
-
-//     static calcTotalPrice(cart: any, productPrice: number) {
-//         let totalPrice = (cart.totalPrice += productPrice);
-//         return totalPrice;
-//     }
-
-//     static deleteProduct(id: string, productPrice: number) {
-//         console.log(id, productPrice);
-
-//         fs.readFile(CART_JSON_PATH, (err: any, fileContent) => {
-//             if (err) {
-//                 return;
-//             }
-
-//             const updatedCart = { ...JSON.parse(fileContent.toString()) };
-//             const product = updatedCart.products.find(
-//                 (prod: any) => +prod.id === +id
-//             );
-//             if (!product) {
-//                 return;
-//             }
-//             const productQty = product.qty;
-//             updatedCart.products = updatedCart.products.filter(
-//                 (prod: any) => +prod.id !== +id
-//             );
-//             updatedCart.totalPrice =
-//                 updatedCart.totalPrice - productPrice * productQty;
-//             fs.writeFile(CART_JSON_PATH, JSON.stringify(updatedCart), (err) => {
-//                 console.error(err);
-//             });
-//         });
-//     }
-
-//     static getCart(cb: Function) {
-//         fs.readFile(CART_JSON_PATH, (err, fileContent) => {
-//             const cart = JSON.parse(fileContent.toString());
-//             if (err) {
-//                 cb(null);
-//             } else {
-//                 cb(cart);
-//             }
-//         });
-//     }
-// }
+// })

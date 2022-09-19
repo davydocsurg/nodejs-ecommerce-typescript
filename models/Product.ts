@@ -1,3 +1,4 @@
+import { time } from "console";
 import mongoose from "mongoose";
 import slugify from "slugify";
 
@@ -44,7 +45,7 @@ const ProductSchema = new mongoose.Schema(
 );
 
 ProductSchema.pre("save", async function (next: Function) {
-    this.slug = slugify(this.title, { lower: true });
+    this.slug = slugify(this.title + new Date(), { lower: true });
     next();
 });
 

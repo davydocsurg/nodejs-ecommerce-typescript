@@ -12,7 +12,6 @@ export const getOne = async (
     // console.log(typeof docID, "id");
 
     const doc = await Model.findById(docID);
-    console.log(doc);
 
     if (!doc) {
         return next(new AppError("No document with that ID was found", 404));

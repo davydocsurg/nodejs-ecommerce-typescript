@@ -7,6 +7,7 @@ class ProductController {
         this.getAddProductPage = this.getAddProductPage.bind(this);
         this.createProduct = this.createProduct.bind(this);
         this.getAdminProducts = this.getAdminProducts.bind(this);
+        this.deleteProduct = this.deleteProduct.bind(this);
         this.returnToHome = this.returnToHome.bind(this);
     }
 
@@ -85,11 +86,18 @@ class ProductController {
 
     async deleteProduct(req: Request, res: Response, next: NextFunction) {
         await deleteOne(Product, req, res, next);
+        // Product.findByIdAndDelete(req.body.productId)
+        //     .then(() => {
+        //         console.log("product deleted");
+        //     })
+        //     .catch((err) => {
+        //         console.error(err);
+        //     });
 
         res.redirect("/admin/products");
     }
 
-    async returnToHome(res: Response) {
+    returnToHome(res: Response) {
         return res.redirect("/");
     }
 }
