@@ -26,16 +26,12 @@ export const deleteOne = async (
     res: Response,
     next: NextFunction
 ) => {
-    const docID = req.body.productId;
-    console.log(mongoose.Types.ObjectId.isValid(docID));
-
-    // if (mongoose.Types.ObjectId.isValid(docID)) {
+    const docID = req.body.productId.trim();
+    // const doc = await Model.findById(docID);
     const doc = await Model.findByIdAndDelete(docID);
-    // if (!doc) {
-    //     return next(
-    //         new AppError("No document with that ID was found", 404)
-    //     );
-    // }
+
+    if (!doc) {
+        return next(new AppError("No document with that ID was found", 404));
+    }
     return doc;
-    // }
 };

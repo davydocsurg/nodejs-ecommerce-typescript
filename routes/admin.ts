@@ -24,7 +24,7 @@ adminRoutes
     .route("/edit-product")
     .post(catchAsync(ProductController.updateProduct));
 adminRoutes
-    .route("/delete-product")
+    .route("/delete-product/:productId")
     .post(catchAsync(ProductController.deleteProduct));
 
 export default adminRoutes;

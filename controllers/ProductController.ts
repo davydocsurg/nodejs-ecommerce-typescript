@@ -1,6 +1,7 @@
 import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
+import { isObjectIdOrHexString } from "mongoose";
 
 class ProductController {
     constructor() {
@@ -85,16 +86,11 @@ class ProductController {
     }
 
     async deleteProduct(req: Request, res: Response, next: NextFunction) {
-        await deleteOne(Product, req, res, next);
-        // Product.findByIdAndDelete(req.body.productId)
-        //     .then(() => {
-        //         console.log("product deleted");
-        //     })
-        //     .catch((err) => {
-        //         console.error(err);
-        //     });
+        const id = req.body.productId;
 
-        res.redirect("/admin/products");
+        await deleteOne(Product, req, res, next);
+
+        res.redirect("admin/products");
     }
 
     returnToHome(res: Response) {
