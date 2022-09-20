@@ -8,7 +8,7 @@ export const getOne = async (
     res: Response,
     next: NextFunction
 ) => {
-    const docID = req.params.id;
+    const docID = req.params.id.trim();
     // console.log(typeof docID, "id");
 
     const doc = await Model.findById(docID);

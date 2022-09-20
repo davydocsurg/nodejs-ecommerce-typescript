@@ -51,6 +51,8 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.addToCart = function (product: any) {
     const cartProductIndex = this.cart.items.findIndex((cp: any) => {
+        console.log(cp);
+
         return cp.productId.toString() === product._id.toString();
     });
     let newQuantity = 1;

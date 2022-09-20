@@ -32,12 +32,14 @@ class ShopController {
     }
 
     async addProdToCart(req: Request, res: Response, next: NextFunction) {
-        // const prodId = req.body.id;
-        // console.log(prodId);
+        const prodId = req.body.id.trim();
 
-        const product = await getOne(Product, req, res, next);
+        const product = await Product.findById(prodId);
+        // const product = await getOne(Product, req, res, next);
 
-        return req.user.addToCart(product);
+        req.user.addToCart(product);
+
+        res.redirect("shop/cart");
     }
 
     async getCart(req: Request, res: Response, next: NextFunction) {

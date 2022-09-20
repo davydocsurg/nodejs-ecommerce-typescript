@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { mongoDbUrl } from "./constants";
 
 export const mongoDBConnection = async () => {
+    console.log("connecting...");
+
     try {
         await mongoose.connect(mongoDbUrl);
         console.log("Database connected successfully");
