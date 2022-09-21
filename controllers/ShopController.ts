@@ -8,6 +8,7 @@ class ShopController {
         this.getAllProducts = this.getAllProducts.bind(this);
         this.getProduct = this.getProduct.bind(this);
         this.addProdToCart = this.addProdToCart.bind(this);
+        this.deleteItemFromCart = this.deleteItemFromCart.bind(this);
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
@@ -39,12 +40,11 @@ class ShopController {
 
         req.user.addToCart(product);
 
-        res.redirect("shop/cart");
+        res.redirect("/cart");
     }
 
     async getCart(req: Request, res: Response, next: NextFunction) {
         const cartProds = await req.user.populate("cart.items.productId");
-        // .execPopulate();
         const prods = cartProds.cart.items;
 
         res.render("shop/cart", {
@@ -52,6 +52,21 @@ class ShopController {
             pageTitle: "Your Cart",
             products: prods,
         });
+    }
+
+    async deleteItemFromCart(req: Request, res: Response, next: NextFunction) {
+        const prodId = req.body.productId.trim();
+        // const product = await Product.findById(prodId);
+        // console.log(
+        //     req.user.cart.items.filter((i: any) => {
+        //         let result = i.toString() !== prodId.toString();
+        //         console.log(result, "63");
+        //     })
+        // );
+
+        await req.user.removeFromCart(prodId);
+
+        res.redirect("/cart");
     }
 }
 
