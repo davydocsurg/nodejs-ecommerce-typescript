@@ -51,8 +51,6 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.methods.addToCart = function (product: any) {
-    console.log(this.cart.items);
-
     const cartProductIndex = this.cart.items.findIndex((cp: any) => {
         return cp.productId.toString() === product._id.toString();
     });
@@ -77,11 +75,8 @@ userSchema.methods.addToCart = function (product: any) {
 
 userSchema.methods.removeFromCart = function (prodId: string) {
     const updatedCart = this.cart.items.filter((item: Item) => {
-        // console.log(item.productId.toString() !== prodId.toString(), "79");
-
         return item._id.toString() !== prodId.toString();
     });
-    // console.log("cart", this.cart.items);
 
     this.cart.items = updatedCart;
     return this.save();

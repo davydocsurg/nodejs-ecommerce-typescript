@@ -56,13 +56,6 @@ class ShopController {
 
     async deleteItemFromCart(req: Request, res: Response, next: NextFunction) {
         const prodId = req.body.productId.trim();
-        // const product = await Product.findById(prodId);
-        // console.log(
-        //     req.user.cart.items.filter((i: any) => {
-        //         let result = i.toString() !== prodId.toString();
-        //         console.log(result, "63");
-        //     })
-        // );
 
         await req.user.removeFromCart(prodId);
 
