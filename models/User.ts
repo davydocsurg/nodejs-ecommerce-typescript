@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import { Item } from "../types/cart";
+import { ProductObj } from "../types/product";
 
 const Schema = mongoose.Schema;
 
@@ -50,9 +51,13 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-userSchema.methods.addToCart = function (product: any) {
+userSchema.methods.addToCart = function (product: ProductObj) {
+    console.log(product);
+
     const cartProductIndex = this.cart.items.findIndex((cp: any) => {
-        return cp.productId.toString() === product._id.toString();
+        console.log(cp);
+
+        return cp.productId.toString() == product._id.toString();
     });
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
@@ -79,6 +84,11 @@ userSchema.methods.removeFromCart = function (prodId: string) {
     });
 
     this.cart.items = updatedCart;
+    return this.save();
+};
+
+userSchema.methods.clearCart = function () {
+    this.cart = { items: [] };
     return this.save();
 };
 

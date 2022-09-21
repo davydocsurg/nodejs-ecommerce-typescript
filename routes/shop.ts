@@ -14,7 +14,7 @@ shopRoutes.route("/cart").get(catchAsync(ShopController.getCart));
 // shopRoutes.get("/checkout", getCheckout);
 
 // post
-// shopRoutes.post("/create-order", postOrder);
+shopRoutes.route("/create-order").post(catchAsync(ShopController.createOrder));
 shopRoutes.route("/cart").post(catchAsync(ShopController.addProdToCart));
 shopRoutes
     .route("/cart-delete-item")

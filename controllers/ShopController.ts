@@ -1,7 +1,8 @@
 import Product from "../models/Product";
 import { NextFunction, Request, Response } from "express";
 import { getOne } from "./HandlerFactory";
-import mongoose from "mongoose";
+import Order from "../models/Order";
+import { OrderType } from "../types/order";
 
 class ShopController {
     constructor() {
@@ -9,6 +10,7 @@ class ShopController {
         this.getProduct = this.getProduct.bind(this);
         this.addProdToCart = this.addProdToCart.bind(this);
         this.deleteItemFromCart = this.deleteItemFromCart.bind(this);
+        this.createOrder = this.createOrder.bind(this);
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
@@ -44,7 +46,9 @@ class ShopController {
     }
 
     async getCart(req: Request, res: Response, next: NextFunction) {
-        const cartProds = await req.user.populate("cart.items.productId");
+        const cartProds = await req.user.populate("cart.items");
+        console.log(cartProds);
+
         const prods = cartProds.cart.items;
 
         res.render("shop/cart", {
@@ -60,6 +64,31 @@ class ShopController {
         await req.user.removeFromCart(prodId);
 
         res.redirect("/cart");
+    }
+
+    async createOrder(req: Request, res: Response, next: NextFunction) {
+        const orders = await req.user.populate("cart");
+
+        const products = orders.cart.items.map((d: OrderType) => {
+            return {
+                quantity: d.quantity,
+                product: { ...d.productId },
+            };
+        });
+
+        const order = new Order({
+            user: {
+                name: req.user.name,
+                userId: req.user,
+            },
+            products: products,
+        });
+        order.save();
+
+        req.user.clearCart();
+
+        return res.redirect("/orders");
+        // TODO: create custom routes
     }
 }
 

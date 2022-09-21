@@ -1,10 +1,9 @@
-import { time } from "console";
 import mongoose from "mongoose";
 import slugify from "slugify";
 
 const Schema = mongoose.Schema;
 
-const ProductSchema = new mongoose.Schema(
+const ProductSchema = new Schema(
     {
         title: {
             type: String,
