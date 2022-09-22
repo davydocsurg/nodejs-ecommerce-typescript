@@ -90,6 +90,18 @@ class ShopController {
         return res.redirect("/orders");
         // TODO: create custom routes
     }
+
+    async getOrders(req: Request, res: Response, next: NextFunction) {
+        const orders = await Order.find({
+            "user.userId": req.user._id,
+        });
+
+        res.render("shop/orders", {
+            path: "/orders",
+            pageTitle: "Your Orders",
+            orders: orders,
+        });
+    }
 }
 
 export default new ShopController();

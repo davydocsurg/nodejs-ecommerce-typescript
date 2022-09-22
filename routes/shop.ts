@@ -10,7 +10,7 @@ shopRoutes.route("/products").get(ShopController.getAllProducts);
 shopRoutes.route("/products/:id").get(catchAsync(ShopController.getProduct));
 // shopRoutes.get("/products", getProducts);
 shopRoutes.route("/cart").get(catchAsync(ShopController.getCart));
-// shopRoutes.get("/orders", getOrders);
+shopRoutes.route("/orders").get(catchAsync(ShopController.getOrders));
 // shopRoutes.get("/checkout", getCheckout);
 
 // post
