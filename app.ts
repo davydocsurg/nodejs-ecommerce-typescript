@@ -17,6 +17,7 @@ import { get404 } from "./controllers/ErrorController";
 import { mongoDBConnection } from "./utils/db";
 import UserController from "./controllers/UserController";
 import User from "./models/User";
+import authRoutes from "./routes/auth";
 
 mongoDBConnection();
 
@@ -48,6 +49,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(get404);
 app.listen(port);
