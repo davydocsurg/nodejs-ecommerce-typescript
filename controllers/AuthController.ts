@@ -12,7 +12,7 @@ class AuthController {
         //     ?.split(";")[1]
         //     .split("=")[1]
         //     .trim();
-        console.log(req.session.isLoggedIn, "check");
+        // console.log(req.session.isLoggedIn, "check");
         res.render("auth/login", {
             path: "/login",
             pageTitle: "Login",

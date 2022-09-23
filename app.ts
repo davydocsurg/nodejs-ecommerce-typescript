@@ -19,6 +19,7 @@ import UserController from "./controllers/UserController";
 import User from "./models/User";
 import authRoutes from "./routes/auth";
 import { sessionMiddleware } from "./middleware/session";
+import { mongoDbUrl } from "./utils/constants";
 
 mongoDBConnection();
 

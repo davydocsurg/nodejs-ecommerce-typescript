@@ -1,15 +1,29 @@
 import { mongoDbUrl } from "../utils/constants";
-const session = require("express-session");
-const mongoDBUri = require("connect-mongodb-session")(session);
+import session from "express-session";
+import MongoDBUri from "connect-mongodb-session";
+import { ConstructorDeclaration } from "typescript";
+// const MongoDBUri = require("connect-mongodb-session")(session);
 
-const store = new mongoDBUri({
-    uri: mongoDBUri,
+interface storeConnectionInt {
+    uri: string;
+    collection: string;
+}
+
+interface sessionMiddlewareInt {
+    secret: string;
+    resave: boolean;
+    saveUninitialized: boolean;
+    store: Function;
+}
+
+const storeConnection = MongoDBUri({
+    uri: mongoDbUrl,
     collection: "sessions",
 });
 
-export const sessionMiddleware: Function = session({
+export const sessionMiddleware = session({
     secret: "lorem secretly",
     resave: false,
     saveUninitialized: false,
-    store: store,
+    store: new storeConnection(),
 });
