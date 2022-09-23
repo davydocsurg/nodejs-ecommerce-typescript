@@ -20,6 +20,7 @@ class ShopController {
             prods: products,
             pageTitle: "All Products",
             path: "/products",
+            isAuthenticated: req.isLoggedIn,
         });
     }
 
@@ -31,6 +32,7 @@ class ShopController {
             product: product,
             pageTitle: product?.title ? product?.title : "Product",
             path: "/products",
+            isAuthenticated: req.isLoggedIn,
         });
     }
 
@@ -55,6 +57,7 @@ class ShopController {
             path: "/cart",
             pageTitle: "Your Cart",
             products: prods,
+            isAuthenticated: req.isLoggedIn,
         });
     }
 
@@ -100,6 +103,7 @@ class ShopController {
             path: "/orders",
             pageTitle: "Your Orders",
             orders: orders,
+            isAuthenticated: req.isLoggedIn,
         });
     }
 }

@@ -17,6 +17,7 @@ class ProductController {
             pageTitle: "Add Product",
             path: "/admin/add-product",
             editing: false,
+            isAuthenticated: req.isLoggedIn,
         });
     }
 
@@ -26,6 +27,7 @@ class ProductController {
             prods: products,
             pageTitle: "All Products",
             path: "/admin/products",
+            isAuthenticated: req.isLoggedIn,
         });
     }
 
@@ -63,6 +65,7 @@ class ProductController {
             path: "/admin/edit-product",
             editing: editMode,
             product: product,
+            isAuthenticated: req.isLoggedIn,
         });
     }
 

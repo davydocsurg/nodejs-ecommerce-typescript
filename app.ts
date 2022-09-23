@@ -18,6 +18,7 @@ import { mongoDBConnection } from "./utils/db";
 import UserController from "./controllers/UserController";
 import User from "./models/User";
 import authRoutes from "./routes/auth";
+import { sessionMiddleware } from "./middleware/session";
 
 mongoDBConnection();
 
@@ -29,6 +30,7 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(sessionMiddleware());
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     User.findOne().then((user) => {
