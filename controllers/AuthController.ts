@@ -42,11 +42,11 @@ class AuthController {
             bcrypt.compare(password, user.password);
             // req.session.isLoggedIn = true;
             // req.session.user = user;
-            return req.session.save((err) => {
-                console.error(err);
+            // return req.session.save((err) => {
+            //     console.error(err);
 
-                res.redirect("/");
-            });
+            res.redirect("/");
+            // });
         } catch (error) {
             console.error(error);
 
