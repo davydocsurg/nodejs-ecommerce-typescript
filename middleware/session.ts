@@ -1,29 +1,27 @@
 import { mongoDbUrl } from "../utils/constants";
 import session from "express-session";
-import MongoDBUri from "connect-mongodb-session";
-import { ConstructorDeclaration } from "typescript";
-// const MongoDBUri = require("connect-mongodb-session")(session);
+import MongoStore from "connect-mongo";
 
-interface storeConnectionInt {
-    uri: string;
-    collection: string;
+// const storeConnection = MongoDBUri({
+//     uri: mongoDbUrl,
+//     collection: "sessions",
+// });
+
+interface Options {
+    url: string;
+    ttl: number;
+    autoRemove: string;
 }
 
-interface sessionMiddlewareInt {
-    secret: string;
-    resave: boolean;
-    saveUninitialized: boolean;
-    store: Function;
-}
-
-const storeConnection = MongoDBUri({
-    uri: mongoDbUrl,
-    collection: "sessions",
-});
+const options: Options = {
+    url: mongoDbUrl,
+    ttl: 14 * 24 * 60 * 60,
+    autoRemove: "native",
+};
 
 export const sessionMiddleware = session({
     secret: "lorem secretly",
     resave: false,
     saveUninitialized: false,
-    store: new storeConnection(),
+    store: MongoStore.create(options),
 });
