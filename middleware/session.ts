@@ -10,13 +10,13 @@ import MongoStore from "connect-mongo";
 interface Options {
     url: string;
     ttl: number;
-    autoRemove: string;
+    // autoRemove: string;
 }
 
 const options: Options = {
     url: mongoDbUrl,
     ttl: 14 * 24 * 60 * 60,
-    autoRemove: "native",
+    // autoRemove: "native",
 };
 
 export const sessionMiddleware = session({

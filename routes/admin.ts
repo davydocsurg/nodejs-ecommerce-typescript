@@ -1,12 +1,13 @@
 import express from "express";
 import ProductController from "../controllers/ProductController";
 import { catchAsync } from "../helpers/helper";
+import { isAuthenticated } from "../middleware/auth";
 // locals
 const adminRoutes = express.Router();
 
 // GET routes
 adminRoutes
-    .route("/add-product")
+    .route("/add-product", isAuthenticated)
     .get(catchAsync(ProductController.getAddProductPage));
 adminRoutes
     .route("/edit-product/:id")
