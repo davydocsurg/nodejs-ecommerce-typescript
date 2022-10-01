@@ -15,6 +15,9 @@ class AuthController {
         //     .split("=")[1]
         //     .trim();
         // console.log(req.session.isLoggedIn, "check");
+        if (req.session.isLoggedIn) {
+            console.log("logged in");
+        }
         res.render("auth/login", {
             path: "/login",
             pageTitle: "Login",
@@ -41,7 +44,7 @@ class AuthController {
         // try {
         //     bcrypt.compare(password, user.password);
         req.session.isLoggedIn = true;
-        req.session.user = user;
+        // req.session.user = user;
         return req.session.save((err) => {
             console.error(err);
 

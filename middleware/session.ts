@@ -8,18 +8,12 @@ import { ConnectMongoOptions } from "connect-mongo/build/main/lib/MongoStore";
 //     collection: "sessions",
 // });
 
-interface Options {
-    mongoUrl: string;
-    ttl: number;
-    autoRemove: string;
-}
-
 const options: ConnectMongoOptions = {
     mongoUrl: mongoDbUrl,
     ttl: 14 * 24 * 60 * 60,
     collectionName: "sessions",
-    // stringify: false,
-    autoRemove: "interval",
+    stringify: false,
+    // autoRemove: "interval",
     // autoRemoveInterval: 1,
     // autoRemove: "native",
 };
