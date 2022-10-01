@@ -31,23 +31,23 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-// app.use(sessionMiddleware);
+app.use(sessionMiddleware);
 
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//     User.findOne().then((user) => {
-//         if (!user) {
-//             UserController.createUser(req, res, next);
-//         }
-//     });
-//     User.findById("632448fd88bfd03d61e97417")
-//         .then((user) => {
-//             req.user = user;
-//             next();
-//         })
-//         .catch((err) => {
-//             console.error(err);
-//         });
-// });
+app.use((req: Request, res: Response, next: NextFunction) => {
+    User.findOne().then((user) => {
+        if (!user) {
+            UserController.createUser(req, res, next);
+        }
+    });
+    User.findById("632448fd88bfd03d61e97417")
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);

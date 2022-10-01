@@ -1,31 +1,43 @@
 import express from "express";
 import ProductController from "../controllers/ProductController";
 import { catchAsync } from "../helpers/helper";
-import { isAuthenticated } from "../middleware/auth";
+import isAuthenticated from "../middleware/auth";
 // locals
 const adminRoutes = express.Router();
 
 // GET routes
-adminRoutes
-    .route("/add-product", isAuthenticated)
-    .get(catchAsync(ProductController.getAddProductPage));
-adminRoutes
-    .route("/edit-product/:id")
-    .get(catchAsync(ProductController.getProductEditPage));
-adminRoutes
-    .route("/products")
-    .get(catchAsync(ProductController.getAdminProducts));
+adminRoutes.get(
+    "/add-product",
+    // isAuthenticated,
+    catchAsync(ProductController.getAddProductPage)
+);
+adminRoutes.get(
+    "/edit-product/:id",
+    // isAuthenticated,
+    catchAsync(ProductController.getProductEditPage)
+);
+adminRoutes.get(
+    "/products",
+    // isAuthenticated,
+    catchAsync(ProductController.getAdminProducts)
+);
 
 // POST routes
-adminRoutes
-    .route("/add-product")
-    .post(catchAsync(ProductController.createProduct));
+adminRoutes.post(
+    "/add-product",
+    // isAuthenticated,
+    catchAsync(ProductController.createProduct)
+);
 
-adminRoutes
-    .route("/edit-product")
-    .post(catchAsync(ProductController.updateProduct));
-adminRoutes
-    .route("/delete-product/:productId")
-    .post(catchAsync(ProductController.deleteProduct));
+adminRoutes.post(
+    "/edit-product",
+    // isAuthenticated,
+    catchAsync(ProductController.updateProduct)
+);
+adminRoutes.post(
+    "/delete-product/:productId",
+    // isAuthenticated,
+    catchAsync(ProductController.deleteProduct)
+);
 
 export default adminRoutes;

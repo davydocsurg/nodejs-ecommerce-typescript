@@ -41,6 +41,7 @@ class ShopController {
 
         const product = await Product.findById(prodId);
         // const product = await getOne(Product, req, res, next);
+        console.log(product, "from add to cart");
 
         req.user.addToCart(product);
 
@@ -49,7 +50,9 @@ class ShopController {
 
     async getCart(req: Request, res: Response, next: NextFunction) {
         const cartProds = await req.user.populate("cart.items");
-        console.log(cartProds);
+        console.log(typeof req.user.populate, "user type");
+
+        console.log(cartProds.cart.items);
 
         const prods = cartProds.cart.items;
 
@@ -57,7 +60,7 @@ class ShopController {
             path: "/cart",
             pageTitle: "Your Cart",
             products: prods,
-            isAuthenticated: req.isLoggedIn,
+            // isAuthenticated: req.isLoggedIn,
         });
     }
 

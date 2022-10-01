@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../helpers/helper";
 
-export const isAuthenticated = catchAsync(
+const isAuthenticated = catchAsync(
     async (res: Response, req: Request, next: NextFunction) => {
-        if (!req.session.isLoggedIn) {
+        const logInSession: boolean = await req.session.isLoggedIn;
+        if (!logInSession) {
             return res.redirect("/login");
         }
-        next();
+        return next();
     }
 );
+export default isAuthenticated;

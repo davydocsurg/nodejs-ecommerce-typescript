@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema(
         cart: {
             items: [
                 {
+                    product: {
+                        type: Object,
+                        required: true,
+                    },
                     productId: {
                         type: Schema.Types.ObjectId,
                         ref: "User",
@@ -54,8 +58,6 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.addToCart = function (product: ProductObj) {
     const cartProductIndex = this.cart.items.findIndex((cp: any) => {
-        console.log(cp);
-
         return cp.productId.toString() == product._id.toString();
     });
     let newQuantity = 1;
@@ -67,6 +69,7 @@ userSchema.methods.addToCart = function (product: ProductObj) {
     } else {
         updatedCartItems.push({
             productId: product._id,
+            product: product,
             quantity: newQuantity,
         });
     }

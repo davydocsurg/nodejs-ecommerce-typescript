@@ -31,27 +31,27 @@ class AuthController {
     }
 
     async loginUser(req: Request, res: Response, next: NextFunction) {
-        const email = req.body.email;
-        const password = req.body.password;
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            return res.redirect("/login");
-        }
+        // const email = req.body.email;
+        // const password = req.body.password;
+        // const user = await User.findOne({ email: email });
+        // if (!user) {
+        //     return res.redirect("/login");
+        // }
 
-        try {
-            bcrypt.compare(password, user.password);
-            // req.session.isLoggedIn = true;
-            // req.session.user = user;
-            // return req.session.save((err) => {
-            //     console.error(err);
+        // try {
+        //     bcrypt.compare(password, user.password);
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        return req.session.save((err) => {
+            console.error(err);
 
             res.redirect("/");
-            // });
-        } catch (error) {
-            console.error(error);
+        });
+        // } catch (error) {
+        //     console.error(error);
 
-            return res.redirect("/login");
-        }
+        //     return res.redirect("/login");
+        // }
     }
 
     async registerUser(req: Request, res: Response, next: NextFunction) {
