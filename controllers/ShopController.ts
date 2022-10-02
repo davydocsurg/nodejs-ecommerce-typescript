@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { getOne } from "./HandlerFactory";
 import Order from "../models/Order";
 import { OrderType } from "../types/order";
+import { authCheck } from "../helpers/helper";
 
 class ShopController {
     constructor() {
@@ -20,7 +21,7 @@ class ShopController {
             prods: products,
             pageTitle: "All Products",
             path: "/products",
-            isAuthenticated: req.isLoggedIn,
+            isAuthenticated: authCheck(req),
         });
     }
 
@@ -32,7 +33,7 @@ class ShopController {
             product: product,
             pageTitle: product?.title ? product?.title : "Product",
             path: "/products",
-            isAuthenticated: req.isLoggedIn,
+            isAuthenticated: authCheck(req),
         });
     }
 
@@ -60,7 +61,7 @@ class ShopController {
             path: "/cart",
             pageTitle: "Your Cart",
             products: prods,
-            // isAuthenticated: req.isLoggedIn,
+            // isAuthenticated: authCheck(req),
         });
     }
 
@@ -106,7 +107,7 @@ class ShopController {
             path: "/orders",
             pageTitle: "Your Orders",
             orders: orders,
-            isAuthenticated: req.isLoggedIn,
+            isAuthenticated: authCheck(req),
         });
     }
 }

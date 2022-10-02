@@ -1,7 +1,7 @@
 import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
-import { isObjectIdOrHexString } from "mongoose";
+import { authCheck } from "../helpers/helper";
 
 class ProductController {
     constructor() {
@@ -17,7 +17,7 @@ class ProductController {
             pageTitle: "Add Product",
             path: "/admin/add-product",
             editing: false,
-            isAuthenticated: req.isLoggedIn,
+            isAuthenticated: authCheck(req),
         });
     }
 
@@ -27,7 +27,7 @@ class ProductController {
             prods: products,
             pageTitle: "All Products",
             path: "/admin/products",
-            isAuthenticated: req.isLoggedIn,
+            isAuthenticated: authCheck(req),
         });
     }
 
@@ -65,7 +65,7 @@ class ProductController {
             path: "/admin/edit-product",
             editing: editMode,
             product: product,
-            isAuthenticated: req.isLoggedIn,
+            isAuthenticated: authCheck(req),
         });
     }
 
