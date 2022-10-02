@@ -8,35 +8,35 @@ const adminRoutes = express.Router();
 // GET routes
 adminRoutes.get(
     "/add-product",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ProductController.getAddProductPage)
 );
 adminRoutes.get(
     "/edit-product/:id",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ProductController.getProductEditPage)
 );
 adminRoutes.get(
     "/products",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ProductController.getAdminProducts)
 );
 
 // POST routes
 adminRoutes.post(
     "/add-product",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ProductController.createProduct)
 );
 
 adminRoutes.post(
     "/edit-product",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ProductController.updateProduct)
 );
 adminRoutes.post(
     "/delete-product/:productId",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ProductController.deleteProduct)
 );
 

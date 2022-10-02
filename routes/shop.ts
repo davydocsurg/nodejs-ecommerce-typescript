@@ -8,12 +8,16 @@ const shopRoutes = express.Router();
 shopRoutes.get("/products", ShopController.getAllProducts);
 
 // shopRoutes.get("/", getProductsIndex);
-shopRoutes.route("/products/:id").get(catchAsync(ShopController.getProduct));
+shopRoutes.get(
+    "/products/:id",
+    isAuthenticated,
+    catchAsync(ShopController.getProduct)
+);
 // shopRoutes.get("/products", getProducts);
 shopRoutes.get("/cart", catchAsync(ShopController.getCart));
 shopRoutes.get(
     "/orders",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ShopController.getOrders)
 );
 // shopRoutes.get("/checkout", getCheckout);
@@ -21,17 +25,17 @@ shopRoutes.get(
 // post
 shopRoutes.post(
     "/create-order",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ShopController.createOrder)
 );
 shopRoutes.post(
     "/cart",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ShopController.addProdToCart)
 );
 shopRoutes.post(
     "/cart-delete-item",
-    // isAuthenticated,
+    isAuthenticated,
     catchAsync(ShopController.deleteItemFromCart)
 );
 

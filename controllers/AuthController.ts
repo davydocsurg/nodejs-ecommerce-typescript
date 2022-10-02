@@ -9,6 +9,7 @@ class AuthController {
         this.loginUser = this.loginUser.bind(this);
         this.getSignupPage = this.getSignupPage.bind(this);
         this.registerUser = this.registerUser.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     getLoginPage(req: Request, res: Response, next: NextFunction) {
@@ -83,6 +84,14 @@ class AuthController {
         await user.save();
 
         return res.redirect("/login");
+    }
+
+    logout(req: Request, res: Response, next: NextFunction) {
+        req.session.destroy((err) => {
+            console.error(err);
+
+            return goHome(res);
+        });
     }
 }
 
