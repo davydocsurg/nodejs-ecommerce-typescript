@@ -1,177 +1,85 @@
-import { Model, DataTypes } from "sequelize";
-import { sequelize } from "../utils/db";
+import mongoose from "mongoose";
+import slugify from "slugify";
 
-interface ProductDetails {
-    id: string;
-    title: string;
-    imageUrl: string;
-    description: string;
-    price: number;
-}
+const Schema = mongoose.Schema;
 
-export const Product = sequelize.define("products", {
-    id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
+const ProductSchema = new Schema(
+    {
+        title: {
+            type: String,
+            required: [true, "Title is required"],
+            minlength: [
+                5,
+                "Title is shorter than the minimum allowed length (5)",
+            ],
+        },
+        slug: {
+            type: String,
+            trim: true,
+        },
+        description: {
+            type: String,
+            required: [true, "Description is required"],
+        },
+        price: {
+            type: Number,
+            required: [true, "Price is required"],
+        },
+        imageUrl: {
+            type: String,
+            required: [true, "Image URL is required"],
+        },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
     },
 
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
 
-    imageUrl: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-
-    description: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-
-    price: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
+ProductSchema.pre("save", async function (next: Function) {
+    this.slug = slugify(this.title + new Date(), { lower: true });
+    next();
 });
 
-// module.exports = (DataTypes: any) => {
-// export class Product extends Model<ProductDetails> implements ProductDetails {
-//     id!: string;
-//     title!: string;
-//     imageUrl!: string;
-//     description!: string;
-//     price!: number;
-// }
+const Product = mongoose.model("Product", ProductSchema);
 
-// Product.init(
-//     {
-//         id: {
-//             type: DataTypes.INTEGER,
-//             allowNull: false,
-//             primaryKey: true,
-//             autoIncrement: true,
-//         },
-
-//         title: {
-//             type: DataTypes.STRING,
-//             allowNull: false,
-//         },
-
-//         imageUrl: {
-//             type: DataTypes.STRING,
-//             allowNull: false,
-//         },
-
-//         description: {
-//             type: DataTypes.STRING,
-//             allowNull: false,
-//         },
-
-//         price: {
-//             type: DataTypes.STRING,
-//             allowNull: false,
-//         },
-//     },
-//     {
-//         sequelize,
-//         modelName: "Product",
-//     }
-// );
-
-// return Product;
-// };
-
-// import fs from "fs";
-// import {
-//     createProduct,
-//     fetchProducts,
-//     fetchProductById,
-//     PRODUCTS_JSON_PATH,
-// } from "../utils/constants";
-// import { Cart } from "./Cart";
-// const db = require("../utils/db");
-
-// export interface Products {
-//     id?: string;
-//     title?: string;
-//     imageUrl?: string;
-//     description?: string;
-//     price: number;
-// }
-
-// // let products: Products[];
-
-// const fetchProductsFromFile = (cb: Function) => {
-//     //console.log(p);
-
-//     fs.readFile(PRODUCTS_JSON_PATH, "utf8", (err, fileContent) => {
-//         if (err) {
-//             return cb([]);
-//         }
-//         let data = JSON.parse(fileContent.toString());
-//         // return data;
-//         cb(data);
-//     });
-// };
+export default Product;
 
 // export class Product {
-//     id?: string;
 //     title?: string;
 //     imageUrl?: string;
 //     description?: string;
 //     price?: number;
 
 //     constructor(
-//         id?: string,
 //         title?: string,
+//         description?: string,
 //         price?: number,
-//         imageUrl?: string,
-//         description?: string
+//         imageUrl?: string
 //     ) {
-//         // this.id = id;
 //         this.title = title;
+//         this.description = description;
 //         this.price = price;
 //         this.imageUrl = imageUrl;
-//         this.description = description;
 //     }
 
 //     save() {
-//         return db.execute(createProduct, [
-//             this.title,
-//             this.price,
-//             this.imageUrl,
-//             this.description,
-//         ]);
-//     }
-
-//     static fetchAll() {
-//         return db.execute(fetchProducts);
-//     }
-
-//     static findById(id: any) {
-//         return db.execute(fetchProductById, [id]);
-//     }
-
-//     static deleteById(id: string) {
-//         fetchProductsFromFile((products: Array<Products>) => {
-//             const product = products.find((prod) => prod.id === id);
-//             const updatedProducts = products.filter((prod) => prod.id !== id);
-//             console.log("from deleteById");
-
-//             fs.writeFile(
-//                 PRODUCTS_JSON_PATH,
-//                 JSON.stringify(updatedProducts),
-//                 (err) => {
-//                     if (!err) {
-//                         Cart.deleteProduct(id, product?.price);
-//                     }
-//                     console.error(err);
-//                 }
-//             );
-//         });
+//         const db = getDb();
+//         return db
+//             .collection("products")
+//             .insertOne(this)
+//             .then((res: Response) => {
+//                 console.log(res);
+//             })
+//             .catch((err: Error) => {
+//                 console.error(err);
+//             });
 //     }
 // }

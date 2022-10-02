@@ -1,28 +1,42 @@
 import express from "express";
-import {
-    getCart,
-    getCheckout,
-    getOrders,
-    getProduct,
-    getProducts,
-    getProductsIndex,
-    postCart,
-    postOrder,
-    removeProductFromCart,
-} from "../controllers/ShopController";
+import ShopController from "../controllers/ShopController";
+import { catchAsync } from "../helpers/helper";
+import isAuthenticated from "../middleware/auth";
 
 const shopRoutes = express.Router();
 
-shopRoutes.get("/", getProductsIndex);
-shopRoutes.get("/products/:id", getProduct);
-shopRoutes.get("/products", getProducts);
-shopRoutes.get("/cart", getCart);
-shopRoutes.get("/orders", getOrders);
-shopRoutes.get("/checkout", getCheckout);
+shopRoutes.get("/products", ShopController.getAllProducts);
+
+// shopRoutes.get("/", getProductsIndex);
+shopRoutes.get(
+    "/products/:id",
+    isAuthenticated,
+    catchAsync(ShopController.getProduct)
+);
+// shopRoutes.get("/products", getProducts);
+shopRoutes.get("/cart", catchAsync(ShopController.getCart));
+shopRoutes.get(
+    "/orders",
+    isAuthenticated,
+    catchAsync(ShopController.getOrders)
+);
+// shopRoutes.get("/checkout", getCheckout);
 
 // post
-shopRoutes.post("/create-order", postOrder);
-shopRoutes.post("/cart", postCart);
-shopRoutes.post("/cart-delete-item", removeProductFromCart);
+shopRoutes.post(
+    "/create-order",
+    isAuthenticated,
+    catchAsync(ShopController.createOrder)
+);
+shopRoutes.post(
+    "/cart",
+    isAuthenticated,
+    catchAsync(ShopController.addProdToCart)
+);
+shopRoutes.post(
+    "/cart-delete-item",
+    isAuthenticated,
+    catchAsync(ShopController.deleteItemFromCart)
+);
 
 export default shopRoutes;
