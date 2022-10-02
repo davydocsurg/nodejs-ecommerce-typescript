@@ -7,11 +7,23 @@ import { authCheck } from "../helpers/helper";
 
 class ShopController {
     constructor() {
+        this.getIndex = this.getIndex.bind(this);
         this.getAllProducts = this.getAllProducts.bind(this);
         this.getProduct = this.getProduct.bind(this);
         this.addProdToCart = this.addProdToCart.bind(this);
         this.deleteItemFromCart = this.deleteItemFromCart.bind(this);
         this.createOrder = this.createOrder.bind(this);
+    }
+
+    async getIndex(req: Request, res: Response, next: NextFunction) {
+        const products = await Product.find().populate("userId");
+
+        res.render("shop/product-list", {
+            prods: products,
+            pageTitle: "All Products",
+            path: "/",
+            isAuthenticated: authCheck(req),
+        });
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
