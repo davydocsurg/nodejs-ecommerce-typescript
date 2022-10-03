@@ -1,7 +1,7 @@
 import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
-import { authCheck } from "../helpers/helper";
+import { authCheck, findUserById } from "../helpers/helper";
 
 class ProductController {
     constructor() {
@@ -32,19 +32,22 @@ class ProductController {
     }
 
     async createProduct(req: Request, res: Response, next: NextFunction) {
+        findUserById(req, next);
+        console.log(req.session.user._id);
+
         const title = req.body.title;
         const price = req.body.price;
         const imageUrl = req.body.imageUrl;
         const description = req.body.description;
+        console.log(req.user, "user req");
 
-        let product = await Product.create({
-            title,
-            price,
-            imageUrl,
-            description,
-            userId: req.user,
-        });
-        console.log(product);
+        // await Product.create({
+        //     title,
+        //     price,
+        //     imageUrl,
+        //     description,
+        //     userId: req.user,
+        // });
 
         this.returnToHome(res);
     }

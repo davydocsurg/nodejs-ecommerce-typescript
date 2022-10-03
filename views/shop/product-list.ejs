@@ -6,7 +6,7 @@
         <%- include('../includes/navigation.ejs') %>
 
             <main>
-                <% if (prods.length> 0) { %>
+                <% if (prods.length > 0) { %>
                     <div class="grid">
                         <% for (let product of prods) { %>
                             <article class="card product-item">
@@ -27,9 +27,8 @@
                                     </p>
                                 </div>
                                 <div class="card__actions">
-                                    <a href="/products/<%= product.id  %> " class="btn">Details</a>
-                                    <%- include('../includes/add-to-cart.ejs',{product}) %>
-
+                                    <a href="/products/<%= product._id %>" class="btn">Details</a>
+                                    <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                                 </div>
                             </article>
                             <% } %>
