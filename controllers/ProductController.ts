@@ -18,6 +18,7 @@ class ProductController {
             path: "/admin/add-product",
             editing: false,
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -32,22 +33,18 @@ class ProductController {
     }
 
     async createProduct(req: Request, res: Response, next: NextFunction) {
-        findUserById(req, next);
-        console.log(req.session.user._id);
-
         const title = req.body.title;
         const price = req.body.price;
         const imageUrl = req.body.imageUrl;
         const description = req.body.description;
-        console.log(req.user, "user req");
 
-        // await Product.create({
-        //     title,
-        //     price,
-        //     imageUrl,
-        //     description,
-        //     userId: req.user,
-        // });
+        await Product.create({
+            title,
+            price,
+            imageUrl,
+            description,
+            userId: req.session.user,
+        });
 
         this.returnToHome(res);
     }
@@ -69,6 +66,7 @@ class ProductController {
             editing: editMode,
             product: product,
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 

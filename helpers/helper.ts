@@ -39,3 +39,9 @@ export const findUserById = async (req: Request, next: NextFunction) => {
     //         console.error(err);
     //     });
 };
+
+export const csrfSetup = (req: Request, res: Response, next: Function) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+};
