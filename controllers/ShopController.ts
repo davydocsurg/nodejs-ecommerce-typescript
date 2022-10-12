@@ -56,8 +56,6 @@ class ShopController {
         const prodId = req.body.id.trim();
 
         const product = await Product.findById(prodId);
-        // const product = await getOne(Product, req, res, next);
-        console.log(product, "from add to cart");
 
         req.user.addToCart(product);
 
@@ -76,6 +74,7 @@ class ShopController {
             pageTitle: "Your Cart",
             products: prods,
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 

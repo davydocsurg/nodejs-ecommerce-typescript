@@ -55,7 +55,6 @@ class ProductController {
 
         if (!editMode) {
             this.returnToHome(res);
-            console.log("not edit");
         }
 
         const product = await Product.findById(prodId);

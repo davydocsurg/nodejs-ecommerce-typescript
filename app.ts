@@ -33,10 +33,11 @@ app.use(authRoutes);
 app.use(get404);
 app.use(flashMsg());
 app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log("jdlnkg");
+
     User.findById(req.session.user._id)
         .then((user) => {
             req.user = user;
-            console.log(req.user);
             next();
         })
         .catch((err) => {
