@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { mongoDbUrl } from "./constants";
+import { localDB, mongoDbUrl } from "./constants";
 import chalk from "chalk";
 
 export const mongoDBConnection = async () => {
     console.log("connecting...");
 
     try {
-        await mongoose.connect(mongoDbUrl);
+        await mongoose.connect(localDB);
         console.log(`Database connected successfully`);
         // console.log(chalk.bgGreen("Database connected successfully"));
     } catch (err) {

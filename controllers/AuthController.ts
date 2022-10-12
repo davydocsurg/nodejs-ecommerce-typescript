@@ -16,19 +16,19 @@ class AuthController {
         if (authCheck(req)) {
             return goHome(res);
         }
-        let message: any = req.flash("login-error");
-        if (message.length > 0) {
-            message = message[0];
-        } else {
-            message = null;
-        }
+        // let message: any = req.flash("login-error");
+        // if (message.length > 0) {
+        //     message = message[0];
+        // } else {
+        //     message = null;
+        // }
 
         res.render("auth/login", {
             path: "/login",
             pageTitle: "Login",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
-            errorMsg: message,
+            // errorMsg: message,
         });
     }
 
@@ -41,6 +41,7 @@ class AuthController {
             path: "/signup",
             pageTitle: "Signup",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
