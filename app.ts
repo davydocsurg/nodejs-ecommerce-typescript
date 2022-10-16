@@ -11,7 +11,7 @@ import { get404 } from "./controllers/ErrorController";
 import { mongoDBConnection } from "./utils/db";
 import authRoutes from "./routes/auth";
 import { sessionMiddleware } from "./middleware/session";
-import { findUserById } from "./helpers/helper";
+import { authCheck, findUserById } from "./helpers/helper";
 import User from "./models/User";
 import { csrfSetup } from "./helpers/helper";
 
@@ -32,18 +32,17 @@ app.use(shopRoutes);
 app.use(authRoutes);
 app.use(get404);
 app.use(flashMsg());
-app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log("jdlnkg");
-
-    User.findById(req.session.user._id)
-        .then((user) => {
-            req.user = user;
-            next();
-        })
-        .catch((err) => {
-            console.error(err);
-        });
-});
+app.use(authCheck);
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//     User.findById(req.session.user._id)
+//         .then((user) => {
+//             req.user = user;
+//             next();
+//         })
+//         .catch((err) => {
+//             console.error(err);
+//         });
+// });
 app.use((req: Request, res: Response, next: NextFunction) => {
     csrfSetup(req, res, next);
 });
