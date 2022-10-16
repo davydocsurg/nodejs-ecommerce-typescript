@@ -50,7 +50,8 @@ class AuthController {
         const password = req.body.password;
         const user = await User.findOne({ email: email });
         if (!user) {
-            req.flash("login-error", "Invalid credentials!");
+            // req.flash("login-error", "Invalid credentials!");
+            console.log("login-error", "Invalid credentials!");
             return res.redirect("/login");
         }
 

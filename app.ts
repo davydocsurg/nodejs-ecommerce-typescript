@@ -22,9 +22,9 @@ const csrfProtection = csurf();
 
 app.set("view engine", "ejs");
 
+app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(sessionMiddleware);
 app.use(csrfProtection);
 
 app.use("/admin", adminRoutes);
@@ -33,9 +33,14 @@ app.use(authRoutes);
 app.use(get404);
 app.use(flashMsg());
 app.use(authCheck);
+app.use((req: Request) => {
+    findUserById(req);
+});
 // app.use((req: Request, res: Response, next: NextFunction) => {
 //     User.findById(req.session.user._id)
 //         .then((user) => {
+//             console.log(user);
+
 //             req.user = user;
 //             next();
 //         })

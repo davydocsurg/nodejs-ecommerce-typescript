@@ -1,10 +1,10 @@
-import { mongoDbUrl } from "../utils/constants";
+import { localDB, mongoDbUrl } from "../utils/constants";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { ConnectMongoOptions } from "connect-mongo/build/main/lib/MongoStore";
 
 const options: ConnectMongoOptions = {
-    mongoUrl: mongoDbUrl,
+    mongoUrl: localDB,
     ttl: 14 * 24 * 60 * 60,
     collectionName: "sessions",
     stringify: false,
