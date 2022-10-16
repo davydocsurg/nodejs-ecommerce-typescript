@@ -23,6 +23,7 @@ class ShopController {
             pageTitle: "All Products",
             path: "/",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -34,6 +35,7 @@ class ShopController {
             pageTitle: "All Products",
             path: "/products",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -46,6 +48,7 @@ class ShopController {
             pageTitle: product?.title ? product?.title : "Product",
             path: "/products",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -53,8 +56,6 @@ class ShopController {
         const prodId = req.body.id.trim();
 
         const product = await Product.findById(prodId);
-        // const product = await getOne(Product, req, res, next);
-        console.log(product, "from add to cart");
 
         req.user.addToCart(product);
 
@@ -63,17 +64,17 @@ class ShopController {
 
     async getCart(req: Request, res: Response, next: NextFunction) {
         const cartProds = await req.user.populate("cart.items");
-        console.log(typeof req.user.populate, "user type");
-
-        console.log(cartProds.cart.items);
+        console.log(cartProds);
 
         const prods = cartProds.cart.items;
+        console.log(prods);
 
         res.render("shop/cart", {
             path: "/cart",
             pageTitle: "Your Cart",
             products: prods,
-            // isAuthenticated: authCheck(req),
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -97,7 +98,7 @@ class ShopController {
 
         const order = new Order({
             user: {
-                name: req.user.name,
+                email: req.user.email,
                 userId: req.user,
             },
             products: products,
@@ -120,6 +121,7 @@ class ShopController {
             pageTitle: "Your Orders",
             orders: orders,
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 }

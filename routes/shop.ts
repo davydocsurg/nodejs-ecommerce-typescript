@@ -5,24 +5,22 @@ import isAuthenticated from "../middleware/auth";
 
 const shopRoutes = express.Router();
 
+shopRoutes.get("/", ShopController.getIndex);
 shopRoutes.get("/products", ShopController.getAllProducts);
 
-// shopRoutes.get("/", getProductsIndex);
 shopRoutes.get(
     "/products/:id",
-    isAuthenticated,
+    // isAuthenticated,
     catchAsync(ShopController.getProduct)
 );
-// shopRoutes.get("/products", getProducts);
 shopRoutes.get("/cart", catchAsync(ShopController.getCart));
 shopRoutes.get(
     "/orders",
     isAuthenticated,
     catchAsync(ShopController.getOrders)
 );
-// shopRoutes.get("/checkout", getCheckout);
 
-// post
+// post routes
 shopRoutes.post(
     "/create-order",
     isAuthenticated,

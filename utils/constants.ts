@@ -15,6 +15,7 @@ export const dbConnection = process.env.MY_SQL_DB_CONNECTION_LIMIT;
 
 // mongodb
 export const mongoDbUrl: string = process.env.MONGO_DB_URL;
+export const localDB: string = process.env.LOCAL_DB;
 
 // database queries
 export const fetchAllProducts = "SELECT * FROM products";

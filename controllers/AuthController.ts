@@ -16,18 +16,24 @@ class AuthController {
         if (authCheck(req)) {
             return goHome(res);
         }
+        // let message: any = req.flash("login-error");
+        // if (message.length > 0) {
+        //     message = message[0];
+        // } else {
+        //     message = null;
+        // }
 
         res.render("auth/login", {
             path: "/login",
             pageTitle: "Login",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+            // errorMsg: message,
         });
     }
 
     getSignupPage(req: Request, res: Response) {
         if (authCheck(req)) {
-            console.log(authCheck(req));
-
             return goHome(res);
         }
 
@@ -35,6 +41,7 @@ class AuthController {
             path: "/signup",
             pageTitle: "Signup",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -43,6 +50,7 @@ class AuthController {
         const password = req.body.password;
         const user = await User.findOne({ email: email });
         if (!user) {
+            req.flash("login-error", "Invalid credentials!");
             return res.redirect("/login");
         }
 
@@ -67,6 +75,14 @@ class AuthController {
         const email = req.body.email;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
+
+        if (password.trim() !== confirmPassword.trim()) {
+            console.log("Passwords must match!");
+            const pwdError = "Passwords do not match!";
+            return res.render("auth/signup", {
+                path: "/signup",
+            });
+        }
 
         await User.findOne({ email: email }).then((userDoc) => {
             if (userDoc) {

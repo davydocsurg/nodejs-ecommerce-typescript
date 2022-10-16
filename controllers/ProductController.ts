@@ -1,7 +1,7 @@
 import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
-import { authCheck } from "../helpers/helper";
+import { authCheck, findUserById } from "../helpers/helper";
 
 class ProductController {
     constructor() {
@@ -18,6 +18,7 @@ class ProductController {
             path: "/admin/add-product",
             editing: false,
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
@@ -37,14 +38,13 @@ class ProductController {
         const imageUrl = req.body.imageUrl;
         const description = req.body.description;
 
-        let product = await Product.create({
+        await Product.create({
             title,
             price,
             imageUrl,
             description,
-            userId: req.user,
+            userId: req.session.user,
         });
-        console.log(product);
 
         this.returnToHome(res);
     }
@@ -55,7 +55,6 @@ class ProductController {
 
         if (!editMode) {
             this.returnToHome(res);
-            console.log("not edit");
         }
 
         const product = await Product.findById(prodId);
@@ -66,6 +65,7 @@ class ProductController {
             editing: editMode,
             product: product,
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
