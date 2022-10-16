@@ -3,11 +3,6 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import { ConnectMongoOptions } from "connect-mongo/build/main/lib/MongoStore";
 
-// const storeConnection = MongoDBUri({
-//     uri: mongoDbUrl,
-//     collection: "sessions",
-// });
-
 const options: ConnectMongoOptions = {
     mongoUrl: mongoDbUrl,
     ttl: 14 * 24 * 60 * 60,
