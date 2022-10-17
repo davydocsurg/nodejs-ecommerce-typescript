@@ -33,8 +33,8 @@ app.use(authRoutes);
 app.use(get404);
 app.use(flashMsg());
 app.use(authCheck);
-app.use((req: Request) => {
-    findUserById(req);
+app.use((req: Request, res: Response, next: NextFunction) => {
+    findUserById(req, next);
 });
 // app.use((req: Request, res: Response, next: NextFunction) => {
 //     User.findById(req.session.user._id)
