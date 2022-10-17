@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
+import { smtpPassword, smtpUsername } from "../utils/constants";
 
 // const transporter = nodemailer.createTransport({
 //     host: process.env.SMTP_HOST,
@@ -45,12 +46,12 @@ export default class MailService {
     //CREATE CONNECTION FOR LIVE
     async createConnection() {
         this.transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT,
-            secure: process.env.SMTP_TLS === "yes" ? true : false,
+            // host: process.env.SMTP_HOST,
+            // port: process.env.SMTP_PORT,
+            // secure: process.env.SMTP_TLS === "yes" ? true : false,
             auth: {
-                user: process.env.SMTP_USERNAME,
-                pass: process.env.SMTP_PASSWORD,
+                user: smtpUsername,
+                pass: smtpPassword,
             },
         });
     }
