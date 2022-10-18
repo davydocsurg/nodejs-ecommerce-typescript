@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
-import { Item } from "../types/cart";
+import { Item } from "../interfaces/cart";
 import { ProductObj } from "../types/product";
 
 const Schema = mongoose.Schema;
@@ -21,6 +21,14 @@ const userSchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
             validate: [validator.isEmail, "Please provide a valid email."],
+        },
+        resetToken: {
+            type: String,
+            trim: true,
+        },
+        resetTokenExpiration: {
+            type: Date,
+            trim: true,
         },
         password: {
             type: String,
