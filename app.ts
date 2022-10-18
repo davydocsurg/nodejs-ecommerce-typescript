@@ -54,16 +54,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     csrfSetup(req, res, next);
 });
 
-const setUpMail = async () => {
-    Logging.info("Connecting with SMTP Server...");
-    const mailService = MailService.getInstance();
-    const getmail = await mailService.createConnection();
-    Logging.info(getmail);
-    Logging.info("SMTP Server Connected");
-    Logging.info("SMTP Connection verified");
-};
-
 app.listen(port, () => {
-    setUpMail();
+    MailService.createConnection();
     mongoDBConnection();
 });

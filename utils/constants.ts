@@ -18,5 +18,7 @@ export const mongoDbUrl: string = process.env.MONGO_DB_URL;
 export const localDB: string = process.env.LOCAL_DB;
 
 // mailing
+export const smtpSender: string = process.env.SMTP_SENDER;
 export const smtpUsername: string = process.env.SMTP_USERNAME;
 export const smtpPassword: string = process.env.SMTP_PASSWORD;
+export const sendgridAPIKey: string = process.env.SENDGRID_API_KEY;

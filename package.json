@@ -28,7 +28,8 @@
         "@types/express-session": "^1.17.5",
         "@types/mysql": "^2.15.21",
         "@types/node": "^18.6.1",
-        "@types/nodemailer": "^6.4.6"
+        "@types/nodemailer": "^6.4.6",
+        "@types/nodemailer-sendgrid": "^1.0.0"
     },
     "dependencies": {
         "@types/dotenv": "^8.2.0",

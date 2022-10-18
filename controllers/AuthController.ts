@@ -3,6 +3,8 @@ import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { authCheck, goHome } from "../helpers/helper";
 import Logging from "../helpers/logs";
+import MailServices from "../services/mailServices";
+import { smtpSender } from "../utils/constants";
 
 class AuthController {
     constructor() {
@@ -79,7 +81,7 @@ class AuthController {
         const confirmPassword = req.body.confirmPassword;
 
         if (password.trim() !== confirmPassword.trim()) {
-            console.log("Passwords must match!");
+            Logging.warn("Passwords must match!");
             const pwdError = "Passwords do not match!";
             return res.render("auth/signup", {
                 path: "/signup",
@@ -100,7 +102,17 @@ class AuthController {
         });
 
         await user.save();
-
+        const registrationMail = {
+            to: email,
+            from: smtpSender,
+            subject: "Registration Succesful",
+            html: `
+            <h1>
+                You've succesfully registered!
+            </h1>
+            `,
+        };
+        await MailServices.sendMail(registrationMail);
         return res.redirect("/login");
     }
 
