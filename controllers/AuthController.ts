@@ -15,7 +15,7 @@ class AuthController {
         this.registerUser = this.registerUser.bind(this);
         this.logout = this.logout.bind(this);
         this.getPwdResetPage = this.getPwdResetPage.bind(this);
-        this.sendPwdResetEmail = this.sendPwdResetEmail.bind(this);
+        // this.sendPwdResetEmail = this.sendPwdResetEmail.bind(this);
     }
 
     getLoginPage(req: Request, res: Response, next: NextFunction) {
@@ -166,16 +166,41 @@ class AuthController {
         });
     }
 
-    async sendPwdResetEmail(req: Request, token: string) {
-        return await transporter.sendMail({
-            to: req.body.email,
-            from: smtpSender,
-            subject: "Reset Password",
-            html: `
-            <p> You requested a password reset </p>
-            <p> Click this <a href="http://localhost:3001/reset/${token}"> link </a> to set a new password. </p>
-            `,
+    async getNewPwdPage(req: Request, res: Response) {
+        const token = req.params.token;
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiration: { $gt: Date.now() },
         });
+
+        res.render("auth/new-password", {
+            path: "/new-password",
+            pageTitle: "New Password",
+            csrfToken: req.csrfToken(),
+            userId: user?._id.toString(),
+            isAuthenticated: authCheck(req),
+            passwordToken: token,
+        });
+    }
+
+    async createNewPwd(req: Request, res: Response) {
+        const newPwd = req.body.password;
+        const userId = req.body.userId;
+        const pwdToken = req.body.passwordToken;
+
+        const user = await User.findOne({
+            resetToken: pwdToken,
+            resetTokenExpiration: { $gt: Date.now() },
+            _id: userId,
+        });
+
+        const hashedPassword = await bcrypt.hash(newPwd, 12);
+        user.password = hashedPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpiration = undefined;
+        await user.save();
+
+        return res.redirect("/login");
     }
 
     logout(req: Request, res: Response, next: NextFunction) {
