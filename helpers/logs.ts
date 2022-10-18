@@ -1,8 +1,17 @@
 import chalk from "chalk";
+// const importFresh = async (modulePath: any) =>
+//     import(`${modulePath}?x=${new Date()}`);
+// const chalk = (await importFresh("chalk")).default;
 
 export default class Logging {
     // public static log = (args:any)=> this.info(args);
     public static log = (args: any) => this.info(args);
+    public static success = (args: any) =>
+        console.log(
+            chalk.green(`[${new Date().toLocaleString()}][INFO]`),
+            typeof args === "string" ? chalk.greenBright(args) : args
+        );
+
     public static info = (args: any) =>
         console.log(
             chalk.blue(`[${new Date().toLocaleString()}][INFO]`),
