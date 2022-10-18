@@ -14,6 +14,8 @@ import { sessionMiddleware } from "./middleware/session";
 import { authCheck, findUserById } from "./helpers/helper";
 import User from "./models/User";
 import { csrfSetup } from "./helpers/helper";
+import Logging from "./helpers/logs";
+import MailService from "./services/mailServices";
 
 const port = process.env.APP_PORT || 3001;
 
@@ -52,6 +54,16 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     csrfSetup(req, res, next);
 });
 
+const setUpMail = async () => {
+    Logging.info("Connecting with SMTP Server...");
+    const mailService = MailService.getInstance();
+    const getmail = await mailService.createConnection();
+    Logging.info(getmail);
+    Logging.info("SMTP Server Connected");
+    Logging.info("SMTP Connection verified");
+};
+
 app.listen(port, () => {
+    setUpMail();
     mongoDBConnection();
 });

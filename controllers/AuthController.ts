@@ -2,6 +2,7 @@ import { Request, NextFunction, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { authCheck, goHome } from "../helpers/helper";
+import Logging from "../helpers/logs";
 
 class AuthController {
     constructor() {
@@ -51,7 +52,7 @@ class AuthController {
         const user = await User.findOne({ email: email });
         if (!user) {
             // req.flash("login-error", "Invalid credentials!");
-            console.log("login-error", "Invalid credentials!");
+            Logging.error("Invalid credentials!");
             return res.redirect("/login");
         }
 
