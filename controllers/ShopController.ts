@@ -28,7 +28,9 @@ class ShopController {
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find().populate("userId");
+        const products = await Product.find({
+            userId: req.session.user._id,
+        }).populate("userId");
 
         res.render("shop/product-list", {
             prods: products,

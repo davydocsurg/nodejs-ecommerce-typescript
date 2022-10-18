@@ -38,18 +38,18 @@ app.use(authCheck);
 app.use((req: Request, res: Response, next: NextFunction) => {
     findUserById(req, next);
 });
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//     User.findById(req.session.user._id)
-//         .then((user) => {
-//             console.log(user);
+app.use((req: Request, res: Response, next: NextFunction) => {
+    User.findById(req.session.user._id)
+        .then((user) => {
+            console.log(user);
 
-//             req.user = user;
-//             next();
-//         })
-//         .catch((err) => {
-//             console.error(err);
-//         });
-// });
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+});
 app.use((req: Request, res: Response, next: NextFunction) => {
     csrfSetup(req, res, next);
 });

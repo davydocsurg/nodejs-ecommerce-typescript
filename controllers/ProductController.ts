@@ -23,12 +23,15 @@ class ProductController {
     }
 
     async getAdminProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find().populate("userId");
+        const products = await Product.find({
+            userId: req.session.user._id,
+        }).populate("userId");
         res.render("admin/products", {
             prods: products,
             pageTitle: "All Products",
             path: "/admin/products",
             isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
         });
     }
 
