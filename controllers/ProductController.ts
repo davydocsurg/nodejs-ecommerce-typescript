@@ -88,7 +88,6 @@ class ProductController {
         };
 
         const product = await Product.findById(prodId);
-        // Logging.info(product?.userId?.toString());
         if (product?.userId?.toString() !== req.session.user?._id.toString()) {
             return res.redirect("/");
         }
