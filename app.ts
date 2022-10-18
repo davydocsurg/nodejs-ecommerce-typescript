@@ -14,6 +14,8 @@ import { sessionMiddleware } from "./middleware/session";
 import { authCheck, findUserById } from "./helpers/helper";
 import User from "./models/User";
 import { csrfSetup } from "./helpers/helper";
+import Logging from "./helpers/logs";
+import MailService from "./services/mailServices";
 
 const port = process.env.APP_PORT || 3001;
 
@@ -22,9 +24,9 @@ const csrfProtection = csurf();
 
 app.set("view engine", "ejs");
 
+app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(sessionMiddleware);
 app.use(csrfProtection);
 
 app.use("/admin", adminRoutes);
@@ -33,9 +35,14 @@ app.use(authRoutes);
 app.use(get404);
 app.use(flashMsg());
 app.use(authCheck);
+app.use((req: Request, res: Response, next: NextFunction) => {
+    findUserById(req, next);
+});
 // app.use((req: Request, res: Response, next: NextFunction) => {
 //     User.findById(req.session.user._id)
 //         .then((user) => {
+//             console.log(user);
+
 //             req.user = user;
 //             next();
 //         })
@@ -48,5 +55,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(port, () => {
+    MailService.createConnection();
     mongoDBConnection();
 });

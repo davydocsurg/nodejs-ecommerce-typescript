@@ -2,6 +2,9 @@ import { Request, NextFunction, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { authCheck, goHome } from "../helpers/helper";
+import Logging from "../helpers/logs";
+import MailServices from "../services/mailServices";
+import { smtpSender } from "../utils/constants";
 
 class AuthController {
     constructor() {
@@ -50,7 +53,8 @@ class AuthController {
         const password = req.body.password;
         const user = await User.findOne({ email: email });
         if (!user) {
-            req.flash("login-error", "Invalid credentials!");
+            // req.flash("login-error", "Invalid credentials!");
+            Logging.error("Invalid credentials!");
             return res.redirect("/login");
         }
 
@@ -77,7 +81,7 @@ class AuthController {
         const confirmPassword = req.body.confirmPassword;
 
         if (password.trim() !== confirmPassword.trim()) {
-            console.log("Passwords must match!");
+            Logging.warn("Passwords must match!");
             const pwdError = "Passwords do not match!";
             return res.render("auth/signup", {
                 path: "/signup",
@@ -98,8 +102,18 @@ class AuthController {
         });
 
         await user.save();
-
-        return res.redirect("/login");
+        const registrationMail = {
+            to: email,
+            from: smtpSender,
+            subject: "Welcome to NodeTS",
+            html: `
+            <h1>
+                You've succesfully registered!
+            </h1>
+            `,
+        };
+        res.redirect("/login");
+        return await MailServices.sendMail(registrationMail);
     }
 
     logout(req: Request, res: Response, next: NextFunction) {

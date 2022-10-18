@@ -1,50 +1,15 @@
 import mongoose from "mongoose";
 import { localDB, mongoDbUrl } from "./constants";
-import chalk from "chalk";
+import Logging from "../helpers/logs";
 
 export const mongoDBConnection = async () => {
-    console.log("connecting...");
+    Logging.info("connecting...");
 
     try {
         await mongoose.connect(localDB);
-        console.log(`Database connected successfully`);
-        // console.log(chalk.bgGreen("Database connected successfully"));
+        Logging.success(`Database connected successfully`);
     } catch (err) {
-        console.error(err);
-        console.error("Connection refused");
+        Logging.error(err);
+        Logging.error("Connection refused");
     }
 };
-
-// let _db: any;
-
-// export const mongoDBConnection = (cb: Function) => {
-//     mongoose
-//         .connect(mongoDbUrl)
-//         .then((client) => {
-//             console.log("Database connected successfully");
-//             _db = client.db();
-//             cb();
-//         })
-//         .catch((err) => {
-//             console.error(err);
-//             throw err;
-//         });
-// };
-
-// export const getDb = () => {
-//     if (_db) {
-//         return _db;
-//     }
-
-//     throw "No database found";
-// };
-
-// import mysql from "mysql2";
-// import { Sequelize } from "sequelize";
-// import { db, dbConnection, dbHost, dbUser, port, pwd } from "./constants";
-
-// export const sequelize = new Sequelize("node-test", "root", "root", {
-//     dialect: "mysql",
-//     host: dbHost,
-//     port: port,
-// });
