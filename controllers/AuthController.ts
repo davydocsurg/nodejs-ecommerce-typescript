@@ -105,15 +105,15 @@ class AuthController {
         const registrationMail = {
             to: email,
             from: smtpSender,
-            subject: "Registration Succesful",
+            subject: "Welcome to NodeTS",
             html: `
             <h1>
                 You've succesfully registered!
             </h1>
             `,
         };
-        await MailServices.sendMail(registrationMail);
-        return res.redirect("/login");
+        res.redirect("/login");
+        return await MailServices.sendMail(registrationMail);
     }
 
     logout(req: Request, res: Response, next: NextFunction) {
