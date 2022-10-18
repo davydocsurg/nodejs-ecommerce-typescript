@@ -72,9 +72,7 @@ class MailService {
             })
             .then((info) => {
                 Logging.info(`Mail sent successfully!!`);
-                Logging.info(
-                    `[MailResponse]=${info.response} [MessageID]=${info.messageId}`
-                );
+                Logging.info(`[MailResponse]=${info} [MessageID]=${info}`);
                 // if (process.env.NODE_ENV === "local") {
                 //     Logging.info(
                 //         `${requestId} - Nodemailer ethereal URL: ${nodemailer.getTestMessageUrl(
