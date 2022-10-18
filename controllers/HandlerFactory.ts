@@ -27,8 +27,10 @@ export const deleteOne = async (
     next: NextFunction
 ) => {
     const docID = req.body.productId.trim();
-    // const doc = await Model.findById(docID);
-    const doc = await Model.findByIdAndDelete(docID);
+    const doc = await Model.deleteOne({
+        _id: docID,
+        userId: req.session.user._id,
+    });
 
     if (!doc) {
         return next(new AppError("No document with that ID was found", 404));

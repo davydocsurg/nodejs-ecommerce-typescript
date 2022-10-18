@@ -2,6 +2,7 @@ import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
 import { authCheck, findUserById } from "../helpers/helper";
+import Logging from "../helpers/logs";
 
 class ProductController {
     constructor() {
@@ -24,7 +25,7 @@ class ProductController {
 
     async getAdminProducts(req: Request, res: Response, next: NextFunction) {
         const products = await Product.find({
-            userId: req.session.user._id,
+            // userId: req.session.user._id,
         }).populate("userId");
         res.render("admin/products", {
             prods: products,
@@ -85,6 +86,12 @@ class ProductController {
             imageUrl: updatedImageUrl,
             description: updatedDesc,
         };
+
+        const product = await Product.findById(prodId);
+        // Logging.info(product?.userId?.toString());
+        if (product?.userId?.toString() !== req.session.user?._id.toString()) {
+            return res.redirect("/");
+        }
 
         await Product.findByIdAndUpdate(prodId, updatedData);
 
