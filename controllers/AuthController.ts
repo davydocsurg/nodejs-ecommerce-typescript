@@ -6,6 +6,7 @@ import Logging from "../helpers/logs";
 import MailServices, { transporter } from "../services/mailServices";
 import { smtpSender } from "../utils/constants";
 import crypto from "crypto";
+import { validationResult } from "express-validator/check";
 
 class AuthController {
     constructor() {
@@ -82,6 +83,17 @@ class AuthController {
         const email = req.body.email;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            Logging.error(errors.array()[0].msg);
+            return res.status(422).render("auth/signup", {
+                path: "/signup",
+                pageTitle: "Signup",
+                errorMessage: errors.array()[0].msg,
+                isAuthenticated: authCheck(req),
+                csrfToken: req.csrfToken(),
+            });
+        }
 
         if (password.trim() !== confirmPassword.trim()) {
             Logging.warn("Passwords must match!");

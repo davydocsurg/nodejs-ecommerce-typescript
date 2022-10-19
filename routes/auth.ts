@@ -1,6 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/AuthController";
 import { catchAsync } from "../helpers/helper";
+import { check } from "express-validator/check";
 
 const authRoutes = express.Router();
 
@@ -12,7 +13,12 @@ authRoutes.route("/reset/:token").get(catchAsync(AuthController.getNewPwdPage));
 
 // post routes
 authRoutes.route("/login").post(catchAsync(AuthController.loginUser));
-authRoutes.route("/signup").post(catchAsync(AuthController.registerUser));
+authRoutes
+    .route("/signup")
+    .post(
+        check("email").isEmail().withMessage("Please enter a valid email"),
+        catchAsync(AuthController.registerUser)
+    );
 authRoutes.route("/logout").post(catchAsync(AuthController.logout));
 authRoutes.route("/reset-pwd").post(catchAsync(AuthController.resetPwd));
 authRoutes.route("/new-password").post(catchAsync(AuthController.createNewPwd));
