@@ -7,6 +7,7 @@ import MailServices, { transporter } from "../services/mailServices";
 import { smtpSender } from "../utils/constants";
 import crypto from "crypto";
 import { validationResult } from "express-validator/check";
+import { SignupErrors } from "../interfaces/signupErrors";
 
 class AuthController {
     constructor() {
@@ -35,11 +36,12 @@ class AuthController {
             pageTitle: "Login",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
-            // errorMsg: message,
+            errorMessage: null,
             oldInput: {
                 email: "",
                 password: "",
             },
+            validationErr: [],
         });
     }
 
@@ -53,11 +55,13 @@ class AuthController {
             pageTitle: "Signup",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            errorMessage: null,
             oldInput: {
                 name: "",
                 email: "",
                 password: "",
             },
+            validationErr: [],
         });
     }
 
@@ -91,6 +95,7 @@ class AuthController {
 
     loginErrorRedirect(res: Response, req: Request, email: string) {
         Logging.error("Invalid credentials!");
+        const errors = validationResult(req);
         return res.status(422).render("auth/login", {
             path: "/login",
             pageTitle: "Login",
@@ -99,6 +104,7 @@ class AuthController {
             oldInput: {
                 email: email,
             },
+            validationErr: errors.array(),
         });
     }
 
@@ -108,20 +114,9 @@ class AuthController {
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
         const errors = validationResult(req);
+        return Logging.info(errors);
         if (!errors.isEmpty()) {
-            Logging.error(errors.array()[0].msg);
-            return res.status(422).render("auth/signup", {
-                path: "/signup",
-                pageTitle: "Signup",
-                errorMessage: errors.array()[0].msg,
-                isAuthenticated: authCheck(req),
-                csrfToken: req.csrfToken(),
-                oldInput: {
-                    name: name,
-                    email: email,
-                    password: password,
-                },
-            });
+            let errmsg = errors.array().map((e: any) => e.msg);
         }
 
         if (password.trim() !== confirmPassword.trim()) {
@@ -158,6 +153,30 @@ class AuthController {
         };
         res.redirect("/login");
         return await MailServices.sendMail(registrationMail);
+    }
+
+    signupValidation(
+        res: Response,
+        req: Request,
+        name: string,
+        email: string,
+        password: string,
+        errmsg: string[],
+        errors: SignupErrors
+    ) {
+        return res.status(422).render("auth/signup", {
+            path: "/signup",
+            pageTitle: "Signup",
+            errorMessage: errmsg,
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+            oldInput: {
+                name: name,
+                email: email,
+                password: password,
+            },
+            validationErr: errors.array(),
+        });
     }
 
     async getPwdResetPage(req: Request, res: Response) {
