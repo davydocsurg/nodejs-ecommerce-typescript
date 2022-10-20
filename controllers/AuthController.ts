@@ -127,11 +127,11 @@ class AuthController {
             );
         }
 
-        await User.findOne({ email: email }).then((userDoc) => {
-            if (userDoc) {
-                return res.redirect("/signup");
-            }
-        });
+        const userDoc = await User.findOne({ email: email });
+        if (userDoc) {
+            return res.redirect("/signup");
+        }
+
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = await User.create({
             name: name,
