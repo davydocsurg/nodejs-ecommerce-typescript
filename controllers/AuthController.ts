@@ -6,6 +6,8 @@ import Logging from "../helpers/logs";
 import MailServices, { transporter } from "../services/mailServices";
 import { smtpSender } from "../utils/constants";
 import crypto from "crypto";
+import { validationResult } from "express-validator";
+import { SignupErrors } from "../interfaces/signupErrors";
 
 class AuthController {
     constructor() {
@@ -34,7 +36,12 @@ class AuthController {
             pageTitle: "Login",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
-            // errorMsg: message,
+            errorMessage: null,
+            oldInput: {
+                email: "",
+                password: "",
+            },
+            validationErr: [],
         });
     }
 
@@ -48,33 +55,57 @@ class AuthController {
             pageTitle: "Signup",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            errorMessage: null,
+            oldInput: {
+                name: "",
+                email: "",
+                password: "",
+            },
+            validationErr: [],
         });
     }
 
     async loginUser(req: Request, res: Response, next: NextFunction) {
         const email = req.body.email;
         const password = req.body.password;
+
         const user = await User.findOne({ email: email });
         if (!user) {
             // req.flash("login-error", "Invalid credentials!");
-            Logging.error("Invalid credentials!");
-            return res.redirect("/login");
+            return this.loginErrorRedirect(res, req, email);
         }
 
-        try {
-            bcrypt.compare(password, user.password);
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save((err) => {
-                console.error(err);
+        const comparePwd = await bcrypt.compare(
+            password.trim(),
+            user.password.trim()
+        );
 
-                res.redirect("/");
-            });
-        } catch (error) {
-            console.error(error);
-
-            return res.redirect("/login");
+        if (!comparePwd) {
+            return this.loginErrorRedirect(res, req, email);
         }
+
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        return req.session.save((err) => {
+            Logging.error(err);
+
+            res.redirect("/");
+        });
+    }
+
+    loginErrorRedirect(res: Response, req: Request, email: string) {
+        Logging.error("Invalid credentials!");
+        const errors = validationResult(req);
+        return res.status(422).render("auth/login", {
+            path: "/login",
+            pageTitle: "Login",
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+            oldInput: {
+                email: email,
+            },
+            validationErr: errors.array(),
+        });
     }
 
     async registerUser(req: Request, res: Response, next: NextFunction) {
@@ -82,20 +113,25 @@ class AuthController {
         const email = req.body.email;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
-
-        if (password.trim() !== confirmPassword.trim()) {
-            Logging.warn("Passwords must match!");
-            const pwdError = "Passwords do not match!";
-            return res.render("auth/signup", {
-                path: "/signup",
-            });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let errmsg = errors.array().map((e: any) => e.msg);
+            return this.signupValidation(
+                res,
+                req,
+                errors,
+                name,
+                email,
+                password,
+                errmsg
+            );
         }
 
-        await User.findOne({ email: email }).then((userDoc) => {
-            if (userDoc) {
-                return res.redirect("/signup");
-            }
-        });
+        const userDoc = await User.findOne({ email: email });
+        if (userDoc) {
+            return res.redirect("/signup");
+        }
+
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = await User.create({
             name: name,
@@ -117,6 +153,30 @@ class AuthController {
         };
         res.redirect("/login");
         return await MailServices.sendMail(registrationMail);
+    }
+
+    signupValidation(
+        res: Response,
+        req: Request,
+        errors: any,
+        name?: string,
+        email?: string,
+        password?: string,
+        errmsg?: string[]
+    ) {
+        return res.status(422).render("auth/signup", {
+            path: "/signup",
+            pageTitle: "Signup",
+            errorMessage: errmsg,
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+            oldInput: {
+                name: name,
+                email: email,
+                password: password,
+            },
+            validationErr: errors.array(),
+        });
     }
 
     async getPwdResetPage(req: Request, res: Response) {

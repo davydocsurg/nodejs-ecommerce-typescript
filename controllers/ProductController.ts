@@ -3,6 +3,7 @@ import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
 import { authCheck, findUserById } from "../helpers/helper";
 import Logging from "../helpers/logs";
+import { validationResult } from "express-validator";
 
 class ProductController {
     constructor() {
@@ -20,6 +21,14 @@ class ProductController {
             editing: false,
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            errorMsg: null,
+            oldValue: {
+                title: "",
+                description: "",
+                imageUrl: "",
+                price: "",
+            },
+            validationErr: [],
         });
     }
 
@@ -41,7 +50,20 @@ class ProductController {
         const price = req.body.price;
         const imageUrl = req.body.imageUrl;
         const description = req.body.description;
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let errmsg = errors.array().map((e: any) => e.msg);
+            return this.createProductValidation(
+                res,
+                req,
+                errors,
+                title,
+                description,
+                imageUrl,
+                price,
+                errmsg
+            );
+        }
         await Product.create({
             title,
             price,
@@ -50,7 +72,7 @@ class ProductController {
             userId: req.session.user,
         });
 
-        this.returnToHome(res);
+        return this.returnToHome(res);
     }
 
     async getProductEditPage(req: Request, res: Response, next: NextFunction) {
@@ -70,6 +92,14 @@ class ProductController {
             product: product,
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            errorMsg: null,
+            oldValue: {
+                title: "",
+                description: "",
+                imageUrl: "",
+                price: "",
+            },
+            validationErr: [],
         });
     }
 
@@ -79,6 +109,26 @@ class ProductController {
         const updatedPrice = req.body.price;
         const updatedImageUrl = req.body.imageUrl;
         const updatedDesc = req.body.description;
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let errmsg = errors.array().map((e: any) => e.msg);
+            return res.status(422).render("admin/edit-product", {
+                path: "/admin/edit-product",
+                pageTitle: "Update Product",
+                errorMsg: errmsg,
+                isAuthenticated: authCheck(req),
+                csrfToken: req.csrfToken(),
+                oldValue: {
+                    title: updatedTitle,
+                    description: updatedDesc,
+                    imageUrl: updatedImageUrl,
+                    price: updatedPrice,
+                },
+                validationErr: errors.array(),
+                editing: false,
+            });
+        }
 
         const updatedData = {
             title: updatedTitle,
@@ -94,7 +144,34 @@ class ProductController {
 
         await Product.findByIdAndUpdate(prodId, updatedData);
 
-        res.redirect("/admin/products");
+        return res.redirect("/admin/products");
+    }
+
+    createProductValidation(
+        res: Response,
+        req: Request,
+        errors: any,
+        title?: string,
+        description?: string,
+        imageUrl?: string,
+        price?: string,
+        errmsg?: string[]
+    ) {
+        return res.status(422).render("admin/edit-product", {
+            path: "/admin/add-product",
+            pageTitle: "Add Product",
+            errorMsg: errmsg,
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+            oldValue: {
+                title: title,
+                description: description,
+                imageUrl: imageUrl,
+                price: price,
+            },
+            validationErr: errors.array(),
+            editing: false,
+        });
     }
 
     async deleteProduct(req: Request, res: Response, next: NextFunction) {
