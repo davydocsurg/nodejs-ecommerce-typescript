@@ -13,18 +13,22 @@ authRoutes.route("/reset/:token").get(catchAsync(AuthController.getNewPwdPage));
 
 // post routes
 authRoutes.route("/login").post(catchAsync(AuthController.loginUser));
-authRoutes
-    .route("/signup")
-    .post(
-        [
-            check("email").isEmail().withMessage("Please enter a valid email"),
-            check(
-                "password",
-                "Password must be greater than 8 characters"
-            ).isLength({ min: 8, max: 15 }),
-        ],
-        catchAsync(AuthController.registerUser)
-    );
+authRoutes.route("/signup").post(
+    [
+        check("email").isEmail().withMessage("Please enter a valid email"),
+        check(
+            "password",
+            "Password must be greater than 8 characters"
+        ).isLength({ min: 8, max: 15 }),
+        check("confirmPassword").custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("Passwords have to match!");
+            }
+            return true;
+        }),
+    ],
+    catchAsync(AuthController.registerUser)
+);
 authRoutes.route("/logout").post(catchAsync(AuthController.logout));
 authRoutes.route("/reset-pwd").post(catchAsync(AuthController.resetPwd));
 authRoutes.route("/new-password").post(catchAsync(AuthController.createNewPwd));

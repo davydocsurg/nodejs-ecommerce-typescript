@@ -114,17 +114,17 @@ class AuthController {
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
         const errors = validationResult(req);
-        return Logging.info(errors);
         if (!errors.isEmpty()) {
             let errmsg = errors.array().map((e: any) => e.msg);
-        }
-
-        if (password.trim() !== confirmPassword.trim()) {
-            Logging.warn("Passwords must match!");
-            const pwdError = "Passwords do not match!";
-            return res.render("auth/signup", {
-                path: "/signup",
-            });
+            return this.signupValidation(
+                res,
+                req,
+                errors,
+                name,
+                email,
+                password,
+                errmsg
+            );
         }
 
         await User.findOne({ email: email }).then((userDoc) => {
@@ -158,11 +158,11 @@ class AuthController {
     signupValidation(
         res: Response,
         req: Request,
-        name: string,
-        email: string,
-        password: string,
-        errmsg: string[],
-        errors: SignupErrors
+        errors: any,
+        name?: string,
+        email?: string,
+        password?: string,
+        errmsg?: string[]
     ) {
         return res.status(422).render("auth/signup", {
             path: "/signup",
