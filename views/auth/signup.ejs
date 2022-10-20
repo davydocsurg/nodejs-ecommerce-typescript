@@ -12,15 +12,15 @@
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <div class="form-control">
                         <label for="name">Name</label>
-                        <input type="text" name="name" id="name">
+                        <input type="text" name="name" id="name" value="<%= oldInput.name %>">
                     </div>
                     <div class="form-control">
                         <label for="email">E-Mail</label>
-                        <input type="text" name="email" id="email">
+                        <input type="text" name="email" id="email" value="<%= oldInput.email %>">
                     </div>
                     <div class="form-control">
                         <label for="password">Password</label>
-                        <input type="password" name="password" id="password">
+                        <input type="password" name="password" id="password" value="<%= oldInput.password %>">
                     </div>
                     <div class="form-control">
                         <label for="confirmPassword">Confirm Password</label>

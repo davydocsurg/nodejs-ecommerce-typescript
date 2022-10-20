@@ -16,7 +16,13 @@ authRoutes.route("/login").post(catchAsync(AuthController.loginUser));
 authRoutes
     .route("/signup")
     .post(
-        check("email").isEmail().withMessage("Please enter a valid email"),
+        [
+            check("email").isEmail().withMessage("Please enter a valid email"),
+            check(
+                "password",
+                "Password must be greater than 8 characters"
+            ).isLength({ min: 8, max: 15 }),
+        ],
         catchAsync(AuthController.registerUser)
     );
 authRoutes.route("/logout").post(catchAsync(AuthController.logout));

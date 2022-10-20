@@ -36,6 +36,10 @@ class AuthController {
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
             // errorMsg: message,
+            oldInput: {
+                email: "",
+                password: "",
+            },
         });
     }
 
@@ -49,33 +53,53 @@ class AuthController {
             pageTitle: "Signup",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            oldInput: {
+                name: "",
+                email: "",
+                password: "",
+            },
         });
     }
 
     async loginUser(req: Request, res: Response, next: NextFunction) {
         const email = req.body.email;
         const password = req.body.password;
+
         const user = await User.findOne({ email: email });
         if (!user) {
             // req.flash("login-error", "Invalid credentials!");
-            Logging.error("Invalid credentials!");
-            return res.redirect("/login");
+            return this.loginErrorRedirect(res, req, email);
         }
 
-        try {
-            bcrypt.compare(password, user.password);
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save((err) => {
-                console.error(err);
+        const comparePwd = await bcrypt.compare(
+            password.trim(),
+            user.password.trim()
+        );
 
-                res.redirect("/");
-            });
-        } catch (error) {
-            console.error(error);
-
-            return res.redirect("/login");
+        if (!comparePwd) {
+            return this.loginErrorRedirect(res, req, email);
         }
+
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        return req.session.save((err) => {
+            Logging.error(err);
+
+            res.redirect("/");
+        });
+    }
+
+    loginErrorRedirect(res: Response, req: Request, email: string) {
+        Logging.error("Invalid credentials!");
+        return res.status(422).render("auth/login", {
+            path: "/login",
+            pageTitle: "Login",
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+            oldInput: {
+                email: email,
+            },
+        });
     }
 
     async registerUser(req: Request, res: Response, next: NextFunction) {
@@ -92,6 +116,11 @@ class AuthController {
                 errorMessage: errors.array()[0].msg,
                 isAuthenticated: authCheck(req),
                 csrfToken: req.csrfToken(),
+                oldInput: {
+                    name: name,
+                    email: email,
+                    password: password,
+                },
             });
         }
 
