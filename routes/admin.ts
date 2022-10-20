@@ -30,13 +30,13 @@ adminRoutes.post(
     isAuthenticated,
     [
         body("title")
-            .isLength({ min: 3, max: 15 })
+            .isLength({ min: 3, max: 20 })
             .trim()
-            .withMessage("Title must be greater than 3 characters"),
+            .withMessage("Title must be between 3 and 20 characters"),
         body("descritpion")
-            .isLength({ min: 10, max: 250 })
-            .trim()
-            .withMessage("Description must be between 10 and 250 characters"),
+            // .isLength({ min: 10, max: 250 })
+            .trim(),
+        // .withMessage("Description must be between 10 and 250 characters"),
         body("price").isNumeric().trim().withMessage("Price must be a number"),
         body("imageUrl")
             .isURL()

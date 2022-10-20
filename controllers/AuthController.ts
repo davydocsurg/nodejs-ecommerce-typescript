@@ -6,7 +6,7 @@ import Logging from "../helpers/logs";
 import MailServices, { transporter } from "../services/mailServices";
 import { smtpSender } from "../utils/constants";
 import crypto from "crypto";
-import { validationResult } from "express-validator/check";
+import { validationResult } from "express-validator";
 import { SignupErrors } from "../interfaces/signupErrors";
 
 class AuthController {

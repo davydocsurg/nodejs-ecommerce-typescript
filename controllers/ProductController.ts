@@ -3,7 +3,7 @@ import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
 import { authCheck, findUserById } from "../helpers/helper";
 import Logging from "../helpers/logs";
-import { validationResult } from "express-validator/check";
+import { validationResult } from "express-validator";
 
 class ProductController {
     constructor() {
@@ -64,6 +64,7 @@ class ProductController {
                 errmsg
             );
         }
+        Logging.info(description);
         await Product.create({
             title,
             price,
@@ -119,6 +120,14 @@ class ProductController {
             product: product,
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            errorMsg: null,
+            oldInput: {
+                title: "",
+                description: "",
+                imageUrl: "",
+                price: "",
+            },
+            validationErr: [],
         });
     }
 
