@@ -37,7 +37,7 @@ adminRoutes.post(
             // .isLength({ min: 10, max: 250 })
             .trim(),
         // .withMessage("Description must be between 10 and 250 characters"),
-        body("price").isNumeric().trim().withMessage("Price must be a number"),
+        body("price").isFloat().trim().withMessage("Price must be a number"),
         body("imageUrl")
             .isURL()
             .trim()
@@ -49,6 +49,21 @@ adminRoutes.post(
 adminRoutes.post(
     "/edit-product",
     isAuthenticated,
+    [
+        body("title")
+            .isLength({ min: 3, max: 20 })
+            .trim()
+            .withMessage("Title must be between 3 and 20 characters"),
+        body("descritpion")
+            // .isLength({ min: 10, max: 250 })
+            .trim(),
+        // .withMessage("Description must be between 10 and 250 characters"),
+        body("price").isFloat().trim().withMessage("Price must be a number"),
+        body("imageUrl")
+            .isURL()
+            .trim()
+            .withMessage("The image URL must be a valid URL"),
+    ],
     catchAsync(ProductController.updateProduct)
 );
 adminRoutes.post(
