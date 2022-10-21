@@ -25,19 +25,9 @@ export const findUserById = async (req: Request, next: NextFunction) => {
     }
     // console.log(req.session.user);
 
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findById(req.session.user._id.toString());
     req.user = user;
-    console.log(req.user);
-
-    // User.findById(req.session.user._id)
-    //     .then((user) => {
-    //         req.user = user;
-    //         console.log(req.user);
-    //         next();
-    //     })
-    //     .catch((err) => {
-    //         console.error(err);
-    //     });
+    next();
 };
 
 export const csrfSetup = (req: Request, res: Response, next: Function) => {

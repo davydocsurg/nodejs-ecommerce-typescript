@@ -33,7 +33,7 @@ class ProductController {
 
     async getAdminProducts(req: Request, res: Response, next: NextFunction) {
         const products = await Product.find({
-            // userId: req.session.user._id,
+            userId: req.session.user?._id,
         }).populate("userId");
         res.render("admin/products", {
             prods: products,

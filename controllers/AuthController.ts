@@ -94,13 +94,15 @@ class AuthController {
     }
 
     loginErrorRedirect(res: Response, req: Request, email: string) {
-        Logging.error("Invalid credentials!");
         const errors = validationResult(req);
+        // let errmsg = errors.array().map((e: any) => e.msg);
+        let errmsg = "Invalid credentials. Check your details and try again";
         return res.status(422).render("auth/login", {
             path: "/login",
             pageTitle: "Login",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            errorMessage: errmsg,
             oldInput: {
                 email: email,
             },

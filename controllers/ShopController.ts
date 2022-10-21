@@ -2,7 +2,7 @@ import Product from "../models/Product";
 import { NextFunction, Request, Response } from "express";
 import { getOne } from "./HandlerFactory";
 import Order from "../models/Order";
-import { OrderType } from "../types/order";
+import { OrderType } from "../interfaces/order";
 import { authCheck } from "../helpers/helper";
 
 class ShopController {
@@ -30,9 +30,7 @@ class ShopController {
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find({
-            userId: req.session.user._id,
-        }).populate("userId");
+        const products = await Product.find();
 
         res.render("shop/product-list", {
             prods: products,
@@ -60,7 +58,7 @@ class ShopController {
         const prodId = req.body.id.trim();
 
         const product = await Product.findById(prodId);
-
+        // req.user = req.session.user;
         req.user.addToCart(product);
 
         res.redirect("/cart");
