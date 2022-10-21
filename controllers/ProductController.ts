@@ -25,7 +25,6 @@ class ProductController {
             oldValue: {
                 title: "",
                 description: "",
-                imageUrl: "",
                 price: "",
             },
             validationErr: [],
@@ -67,7 +66,7 @@ class ProductController {
         await Product.create({
             title,
             price,
-            imageUrl,
+            image,
             description,
             userId: req.session.user,
         });
@@ -96,7 +95,7 @@ class ProductController {
             oldValue: {
                 title: "",
                 description: "",
-                imageUrl: "",
+
                 price: "",
             },
             validationErr: [],
@@ -122,7 +121,6 @@ class ProductController {
                 oldValue: {
                     title: updatedTitle,
                     description: updatedDesc,
-                    imageUrl: updatedImageUrl,
                     price: updatedPrice,
                 },
                 validationErr: errors.array(),
@@ -133,7 +131,6 @@ class ProductController {
         const updatedData = {
             title: updatedTitle,
             price: updatedPrice,
-            imageUrl: updatedImageUrl,
             description: updatedDesc,
         };
 

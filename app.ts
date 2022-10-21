@@ -3,6 +3,7 @@ import express, { Request, NextFunction, Response } from "express";
 import bodyParser from "body-parser";
 import flashMsg from "connect-flash";
 import csurf from "csurf";
+import multer from "multer";
 
 // locals
 import shopRoutes from "./routes/shop";
@@ -26,6 +27,7 @@ app.set("view engine", "ejs");
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer().single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(csrfProtection);
 
