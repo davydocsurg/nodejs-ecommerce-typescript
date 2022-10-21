@@ -20,6 +20,12 @@ shopRoutes.get(
     catchAsync(ShopController.getOrders)
 );
 
+shopRoutes.get(
+    "/orders/:orderId",
+    isAuthenticated,
+    catchAsync(ShopController.getInvoice)
+);
+
 // post routes
 shopRoutes.post(
     "/create-order",

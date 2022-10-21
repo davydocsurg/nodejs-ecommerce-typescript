@@ -4,6 +4,9 @@ import { getOne } from "./HandlerFactory";
 import Order from "../models/Order";
 import { OrderType } from "../interfaces/order";
 import { authCheck } from "../helpers/helper";
+import fs from "fs";
+import path from "path";
+import Logging from "../helpers/logs";
 
 class ShopController {
     constructor() {
@@ -66,10 +69,8 @@ class ShopController {
 
     async getCart(req: Request, res: Response, next: NextFunction) {
         const cartProds = await req.user.populate("cart.items");
-        console.log(cartProds);
 
         const prods = cartProds.cart.items;
-        console.log(prods);
 
         res.render("shop/cart", {
             path: "/cart",
@@ -94,7 +95,7 @@ class ShopController {
         const products = orders.cart.items.map((d: OrderType) => {
             return {
                 quantity: d.quantity,
-                product: { ...d.productId },
+                product: { ...d.product },
             };
         });
 
@@ -105,7 +106,7 @@ class ShopController {
             },
             products: products,
         });
-        order.save();
+        await order.save();
 
         req.user.clearCart();
 
@@ -125,6 +126,38 @@ class ShopController {
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
         });
+    }
+
+    async getInvoice(req: Request, res: Response, next: NextFunction) {
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return Logging.warn("No orders found");
+        }
+        if (order.user?.userId.toString() !== req.user._id.toString()) {
+            return Logging.error("Unauthorized");
+        }
+
+        const invoiceName = "invoice-" + orderId + ".pdf";
+        const invoicePath = path.join("public", "invoices", invoiceName);
+        // fs.readFile(invoicePath, (err: unknown, data: Buffer) => {
+        //     if (err) {
+        //         return Logging.error(err);
+        //     }
+        // res.setHeader("content-type", "application/pdf");
+        // res.setHeader(
+        //     "content-disposition",
+        //     'inline; attachment"' + invoiceName + '"'
+        // );
+        //     res.send(data);
+        // });
+        const file = await fs.createReadStream(invoicePath);
+        res.setHeader("content-type", "application/pdf");
+        res.setHeader(
+            "content-disposition",
+            'inline; attachment"' + invoiceName + '"'
+        );
+        file.pipe(res);
     }
 }
 
