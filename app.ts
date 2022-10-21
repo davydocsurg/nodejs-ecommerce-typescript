@@ -17,6 +17,7 @@ import User from "./models/User";
 import { csrfSetup } from "./helpers/helper";
 import Logging from "./helpers/logs";
 import MailService from "./services/mailServices";
+import { fileStorage, fileValidation } from "./helpers/fileUpload";
 
 const port = process.env.APP_PORT || 3001;
 
@@ -27,7 +28,9 @@ app.set("view engine", "ejs");
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer().single("image"));
+app.use(
+    multer({ storage: fileStorage, fileFilter: fileValidation }).single("image")
+);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(csrfProtection);
 

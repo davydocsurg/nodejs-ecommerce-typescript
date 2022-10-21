@@ -47,9 +47,24 @@ class ProductController {
     async createProduct(req: Request, res: Response, next: NextFunction) {
         const title = req.body.title;
         const price = req.body.price;
-        const imageUrl = req.body.imageUrl;
+        const image = req.file;
         const description = req.body.description;
         const errors = validationResult(req);
+        console.log(image);
+
+        if (!image) {
+            let errmsg = "Attached file is not an image";
+            return this.createProductValidation(
+                res,
+                req,
+                errors,
+                title,
+                description,
+                price,
+                errmsg
+            );
+        }
+
         if (!errors.isEmpty()) {
             let errmsg = errors.array().map((e: any) => e.msg);
             return this.createProductValidation(
@@ -58,15 +73,15 @@ class ProductController {
                 errors,
                 title,
                 description,
-                imageUrl,
                 price,
                 errmsg
             );
         }
+        const imageUrl = image.path;
         await Product.create({
             title,
             price,
-            image,
+            imageUrl,
             description,
             userId: req.session.user,
         });
@@ -95,7 +110,6 @@ class ProductController {
             oldValue: {
                 title: "",
                 description: "",
-
                 price: "",
             },
             validationErr: [],
@@ -106,7 +120,7 @@ class ProductController {
         const prodId = req.body.id;
         const updatedTitle = req.body.title;
         const updatedPrice = req.body.price;
-        const updatedImageUrl = req.body.imageUrl;
+        const updatedImage = req.body.imageUrl;
         const updatedDesc = req.body.description;
 
         const errors = validationResult(req);
@@ -144,15 +158,15 @@ class ProductController {
         return res.redirect("/admin/products");
     }
 
+    // form validation rules
     createProductValidation(
         res: Response,
         req: Request,
         errors: any,
         title?: string,
         description?: string,
-        imageUrl?: string,
         price?: string,
-        errmsg?: string[]
+        errmsg?: string | string[]
     ) {
         return res.status(422).render("admin/edit-product", {
             path: "/admin/add-product",
@@ -163,7 +177,6 @@ class ProductController {
             oldValue: {
                 title: title,
                 description: description,
-                imageUrl: imageUrl,
                 price: price,
             },
             validationErr: errors.array(),
