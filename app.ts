@@ -32,6 +32,11 @@ app.use(
     multer({ storage: fileStorage, fileFilter: fileValidation }).single("image")
 );
 app.use(express.static(path.join(__dirname, "public")));
+// serve images
+app.use(
+    "/public/products/images",
+    express.static(path.join(__dirname, "public/products/images"))
+);
 app.use(csrfProtection);
 
 app.use("/admin", adminRoutes);

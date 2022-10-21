@@ -120,7 +120,7 @@ class ProductController {
         const prodId = req.body.id;
         const updatedTitle = req.body.title;
         const updatedPrice = req.body.price;
-        const updatedImage = req.body.imageUrl;
+        const image = req.file;
         const updatedDesc = req.body.description;
 
         const errors = validationResult(req);
@@ -141,11 +141,12 @@ class ProductController {
                 editing: false,
             });
         }
-
+        const updatedImage = image.path;
         const updatedData = {
             title: updatedTitle,
             price: updatedPrice,
             description: updatedDesc,
+            imageUrl: updatedImage,
         };
 
         const product = await Product.findById(prodId);
