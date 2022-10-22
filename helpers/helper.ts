@@ -25,7 +25,7 @@ export const findUserById = async (req: Request, next: NextFunction) => {
     }
     // console.log(req.session.user);
 
-    const user = await User.findById(req.session.user._id.toString());
+    const user = await User.findById(req.session.user?._id.toString());
     req.user = user;
     next();
 };

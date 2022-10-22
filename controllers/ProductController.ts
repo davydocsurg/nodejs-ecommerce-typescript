@@ -4,6 +4,7 @@ import { deleteOne } from "./HandlerFactory";
 import { authCheck, findUserById } from "../helpers/helper";
 import Logging from "../helpers/logs";
 import { validationResult } from "express-validator";
+import { destroyFile } from "../helpers/file";
 
 class ProductController {
     constructor() {
@@ -50,7 +51,6 @@ class ProductController {
         const image = req.file;
         const description = req.body.description;
         const errors = validationResult(req);
-        console.log(image);
 
         if (!image) {
             let errmsg = "Attached file is not an image";
@@ -141,7 +141,7 @@ class ProductController {
                 editing: false,
             });
         }
-        const updatedImage = image.path;
+        const updatedImage = image?.path;
         const updatedData = {
             title: updatedTitle,
             price: updatedPrice,
@@ -150,6 +150,9 @@ class ProductController {
         };
 
         const product = await Product.findById(prodId);
+        if (image) {
+            destroyFile(product?.imageUrl);
+        }
         if (product?.userId?.toString() !== req.session.user?._id.toString()) {
             return res.redirect("/");
         }
@@ -187,6 +190,8 @@ class ProductController {
 
     async deleteProduct(req: Request, res: Response, next: NextFunction) {
         const id = req.body.productId;
+        const product = Product.findById(id);
+        destroyFile(product?.imageUrl);
 
         await deleteOne(Product, req, res, next);
 

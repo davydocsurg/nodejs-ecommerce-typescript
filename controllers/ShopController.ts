@@ -7,6 +7,7 @@ import { authCheck } from "../helpers/helper";
 import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";
+import PDFDocument from "pdfkit";
 
 class ShopController {
     constructor() {
@@ -140,6 +141,36 @@ class ShopController {
 
         const invoiceName = "invoice-" + orderId + ".pdf";
         const invoicePath = path.join("public", "invoices", invoiceName);
+
+        const pdfDoc = new PDFDocument();
+        res.setHeader("content-type", "application/pdf");
+        res.setHeader(
+            "content-disposition",
+            'inline; attachment"' + invoiceName + '"'
+        );
+        pdfDoc.pipe(fs.createWriteStream(invoicePath));
+        pdfDoc.pipe(res);
+
+        pdfDoc.fontSize(25).text("Invoice");
+        let totalPrice = 0;
+        order.products.forEach((prod) => {
+            totalPrice += prod.quantity * prod.product.price;
+            pdfDoc
+                .fontSize(14)
+                .text(
+                    prod.product.title +
+                        ": " +
+                        prod.quantity +
+                        " * " +
+                        "$" +
+                        prod.product.price
+                );
+        });
+
+        pdfDoc.fontSize(20).text("Total Price $" + totalPrice);
+
+        pdfDoc.end();
+
         // fs.readFile(invoicePath, (err: unknown, data: Buffer) => {
         //     if (err) {
         //         return Logging.error(err);
@@ -151,13 +182,9 @@ class ShopController {
         // );
         //     res.send(data);
         // });
-        const file = await fs.createReadStream(invoicePath);
-        res.setHeader("content-type", "application/pdf");
-        res.setHeader(
-            "content-disposition",
-            'inline; attachment"' + invoiceName + '"'
-        );
-        file.pipe(res);
+        // const file = await fs.createReadStream(invoicePath);
+
+        // file.pipe(res);
     }
 }
 
