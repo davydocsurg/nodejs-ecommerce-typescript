@@ -190,12 +190,17 @@ class ProductController {
 
     async deleteProduct(req: Request, res: Response, next: NextFunction) {
         const id = req.body.productId;
-        const product = Product.findById(id);
+
+        const product = await Product.findById(id);
+        if (!product) {
+            return Logging.warn("No products found");
+        }
+
         destroyFile(product?.imageUrl);
 
         await deleteOne(Product, req, res, next);
 
-        res.redirect("admin/products");
+        return res.redirect("/admin/products");
     }
 
     returnToHome(res: Response) {
