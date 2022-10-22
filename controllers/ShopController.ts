@@ -2,8 +2,12 @@ import Product from "../models/Product";
 import { NextFunction, Request, Response } from "express";
 import { getOne } from "./HandlerFactory";
 import Order from "../models/Order";
-import { OrderType } from "../types/order";
+import { OrderType } from "../interfaces/order";
 import { authCheck } from "../helpers/helper";
+import fs from "fs";
+import path from "path";
+import Logging from "../helpers/logs";
+import PDFDocument from "pdfkit";
 
 class ShopController {
     constructor() {
@@ -30,9 +34,7 @@ class ShopController {
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find({
-            userId: req.session.user._id,
-        }).populate("userId");
+        const products = await Product.find();
 
         res.render("shop/product-list", {
             prods: products,
@@ -60,7 +62,7 @@ class ShopController {
         const prodId = req.body.id.trim();
 
         const product = await Product.findById(prodId);
-
+        // req.user = req.session.user;
         req.user.addToCart(product);
 
         res.redirect("/cart");
@@ -68,10 +70,8 @@ class ShopController {
 
     async getCart(req: Request, res: Response, next: NextFunction) {
         const cartProds = await req.user.populate("cart.items");
-        console.log(cartProds);
 
         const prods = cartProds.cart.items;
-        console.log(prods);
 
         res.render("shop/cart", {
             path: "/cart",
@@ -96,7 +96,7 @@ class ShopController {
         const products = orders.cart.items.map((d: OrderType) => {
             return {
                 quantity: d.quantity,
-                product: { ...d.productId },
+                product: { ...d.product },
             };
         });
 
@@ -107,7 +107,7 @@ class ShopController {
             },
             products: products,
         });
-        order.save();
+        await order.save();
 
         req.user.clearCart();
 
@@ -127,6 +127,64 @@ class ShopController {
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
         });
+    }
+
+    async getInvoice(req: Request, res: Response, next: NextFunction) {
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return Logging.warn("No orders found");
+        }
+        if (order.user?.userId.toString() !== req.user._id.toString()) {
+            return Logging.error("Unauthorized");
+        }
+
+        const invoiceName = "invoice-" + orderId + ".pdf";
+        const invoicePath = path.join("public", "invoices", invoiceName);
+
+        const pdfDoc = new PDFDocument();
+        res.setHeader("content-type", "application/pdf");
+        res.setHeader(
+            "content-disposition",
+            'inline; attachment"' + invoiceName + '"'
+        );
+        pdfDoc.pipe(fs.createWriteStream(invoicePath));
+        pdfDoc.pipe(res);
+
+        pdfDoc.fontSize(25).text("Invoice");
+        let totalPrice = 0;
+        order.products.forEach((prod) => {
+            totalPrice += prod.quantity * prod.product.price;
+            pdfDoc
+                .fontSize(14)
+                .text(
+                    prod.product.title +
+                        ": " +
+                        prod.quantity +
+                        " * " +
+                        "$" +
+                        prod.product.price
+                );
+        });
+
+        pdfDoc.fontSize(20).text("Total Price $" + totalPrice);
+
+        pdfDoc.end();
+
+        // fs.readFile(invoicePath, (err: unknown, data: Buffer) => {
+        //     if (err) {
+        //         return Logging.error(err);
+        //     }
+        // res.setHeader("content-type", "application/pdf");
+        // res.setHeader(
+        //     "content-disposition",
+        //     'inline; attachment"' + invoiceName + '"'
+        // );
+        //     res.send(data);
+        // });
+        // const file = await fs.createReadStream(invoicePath);
+
+        // file.pipe(res);
     }
 }
 

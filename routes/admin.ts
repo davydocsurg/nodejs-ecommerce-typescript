@@ -38,10 +38,6 @@ adminRoutes.post(
             .trim(),
         // .withMessage("Description must be between 10 and 250 characters"),
         body("price").isFloat().trim().withMessage("Price must be a number"),
-        body("imageUrl")
-            .isURL()
-            .trim()
-            .withMessage("The image URL must be a valid URL"),
     ],
     catchAsync(ProductController.createProduct)
 );
@@ -59,10 +55,6 @@ adminRoutes.post(
             .trim(),
         // .withMessage("Description must be between 10 and 250 characters"),
         body("price").isFloat().trim().withMessage("Price must be a number"),
-        body("imageUrl")
-            .isURL()
-            .trim()
-            .withMessage("The image URL must be a valid URL"),
     ],
     catchAsync(ProductController.updateProduct)
 );

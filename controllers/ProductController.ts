@@ -4,6 +4,7 @@ import { deleteOne } from "./HandlerFactory";
 import { authCheck, findUserById } from "../helpers/helper";
 import Logging from "../helpers/logs";
 import { validationResult } from "express-validator";
+import { destroyFile } from "../helpers/file";
 
 class ProductController {
     constructor() {
@@ -25,7 +26,6 @@ class ProductController {
             oldValue: {
                 title: "",
                 description: "",
-                imageUrl: "",
                 price: "",
             },
             validationErr: [],
@@ -34,7 +34,7 @@ class ProductController {
 
     async getAdminProducts(req: Request, res: Response, next: NextFunction) {
         const products = await Product.find({
-            // userId: req.session.user._id,
+            userId: req.session.user?._id,
         }).populate("userId");
         res.render("admin/products", {
             prods: products,
@@ -48,9 +48,23 @@ class ProductController {
     async createProduct(req: Request, res: Response, next: NextFunction) {
         const title = req.body.title;
         const price = req.body.price;
-        const imageUrl = req.body.imageUrl;
+        const image = req.file;
         const description = req.body.description;
         const errors = validationResult(req);
+
+        if (!image) {
+            let errmsg = "Attached file is not an image";
+            return this.createProductValidation(
+                res,
+                req,
+                errors,
+                title,
+                description,
+                price,
+                errmsg
+            );
+        }
+
         if (!errors.isEmpty()) {
             let errmsg = errors.array().map((e: any) => e.msg);
             return this.createProductValidation(
@@ -59,11 +73,11 @@ class ProductController {
                 errors,
                 title,
                 description,
-                imageUrl,
                 price,
                 errmsg
             );
         }
+        const imageUrl = image.path;
         await Product.create({
             title,
             price,
@@ -96,7 +110,6 @@ class ProductController {
             oldValue: {
                 title: "",
                 description: "",
-                imageUrl: "",
                 price: "",
             },
             validationErr: [],
@@ -107,7 +120,7 @@ class ProductController {
         const prodId = req.body.id;
         const updatedTitle = req.body.title;
         const updatedPrice = req.body.price;
-        const updatedImageUrl = req.body.imageUrl;
+        const image = req.file;
         const updatedDesc = req.body.description;
 
         const errors = validationResult(req);
@@ -122,22 +135,24 @@ class ProductController {
                 oldValue: {
                     title: updatedTitle,
                     description: updatedDesc,
-                    imageUrl: updatedImageUrl,
                     price: updatedPrice,
                 },
                 validationErr: errors.array(),
                 editing: false,
             });
         }
-
+        const updatedImage = image?.path;
         const updatedData = {
             title: updatedTitle,
             price: updatedPrice,
-            imageUrl: updatedImageUrl,
             description: updatedDesc,
+            imageUrl: updatedImage,
         };
 
         const product = await Product.findById(prodId);
+        if (image) {
+            destroyFile(product?.imageUrl);
+        }
         if (product?.userId?.toString() !== req.session.user?._id.toString()) {
             return res.redirect("/");
         }
@@ -147,15 +162,15 @@ class ProductController {
         return res.redirect("/admin/products");
     }
 
+    // form validation rules
     createProductValidation(
         res: Response,
         req: Request,
         errors: any,
         title?: string,
         description?: string,
-        imageUrl?: string,
         price?: string,
-        errmsg?: string[]
+        errmsg?: string | string[]
     ) {
         return res.status(422).render("admin/edit-product", {
             path: "/admin/add-product",
@@ -166,7 +181,6 @@ class ProductController {
             oldValue: {
                 title: title,
                 description: description,
-                imageUrl: imageUrl,
                 price: price,
             },
             validationErr: errors.array(),
@@ -177,9 +191,16 @@ class ProductController {
     async deleteProduct(req: Request, res: Response, next: NextFunction) {
         const id = req.body.productId;
 
+        const product = await Product.findById(id);
+        if (!product) {
+            return Logging.warn("No products found");
+        }
+
+        destroyFile(product?.imageUrl);
+
         await deleteOne(Product, req, res, next);
 
-        res.redirect("admin/products");
+        return res.redirect("/admin/products");
     }
 
     returnToHome(res: Response) {
