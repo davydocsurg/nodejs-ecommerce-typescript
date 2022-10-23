@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";
 import PDFDocument from "pdfkit";
+import { ITEMS_PER_PAGE } from "../utils/constants";
 
 class ShopController {
     constructor() {
@@ -20,9 +21,11 @@ class ShopController {
     }
 
     async getIndex(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find({
-            userId: req.session.user?._id,
-        }).populate("userId");
+        const page: number | any = req.query.page;
+
+        const products = await Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
 
         res.render("shop/product-list", {
             prods: products,
@@ -34,7 +37,10 @@ class ShopController {
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find();
+        const page: number | any = req.query.page;
+        const products = await Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit();
 
         res.render("shop/product-list", {
             prods: products,
