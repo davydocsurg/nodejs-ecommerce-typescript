@@ -1,10 +1,20 @@
 import Product from "../models/Product";
 import { Request, NextFunction, Response } from "express";
 import { deleteOne } from "./HandlerFactory";
-import { authCheck, findUserById } from "../helpers/helper";
+import {
+    AdminProductsPagination,
+    authCheck,
+    calcPrevPage,
+    checkForNextPage,
+    findUserById,
+    getLastPage,
+    getNextPage,
+    getPrevPage,
+} from "../helpers";
 import Logging from "../helpers/logs";
 import { validationResult } from "express-validator";
 import { destroyFile } from "../helpers/file";
+import { ITEMS_PER_PAGE } from "../utils/constants";
 
 class ProductController {
     constructor() {
@@ -33,15 +43,26 @@ class ProductController {
     }
 
     async getAdminProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find({
-            userId: req.session.user?._id,
-        }).populate("userId");
+        const page: number | string = +req.query.page || 1;
+
+        const pageCount = await Product.find().countDocuments();
+        const products = await AdminProductsPagination(
+            page,
+            ITEMS_PER_PAGE,
+            req
+        );
         res.render("admin/products", {
             prods: products,
             pageTitle: "All Products",
             path: "/admin/products",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            currentPage: page,
+            hasNextPage: checkForNextPage(ITEMS_PER_PAGE, page, pageCount),
+            hasPreviousPage: calcPrevPage(page),
+            nextPage: getNextPage(page),
+            previousPage: getPrevPage(page),
+            lastPage: getLastPage(pageCount, ITEMS_PER_PAGE),
         });
     }
 

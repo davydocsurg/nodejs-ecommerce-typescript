@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../helpers/helper";
+import { catchAsync } from "../helpers";
 
 const isAuthenticated = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {

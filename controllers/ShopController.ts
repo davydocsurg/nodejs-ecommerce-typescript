@@ -3,11 +3,20 @@ import { NextFunction, Request, Response } from "express";
 import { getOne } from "./HandlerFactory";
 import Order from "../models/Order";
 import { OrderType } from "../interfaces/order";
-import { authCheck } from "../helpers/helper";
+import {
+    authCheck,
+    calcPrevPage,
+    checkForNextPage,
+    getLastPage,
+    getNextPage,
+    getPrevPage,
+    ProductsPagination,
+} from "../helpers";
 import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";
 import PDFDocument from "pdfkit";
+import { ITEMS_PER_PAGE } from "../utils/constants";
 
 class ShopController {
     constructor() {
@@ -20,9 +29,14 @@ class ShopController {
     }
 
     async getIndex(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find({
-            userId: req.session.user?._id,
-        }).populate("userId");
+        const page: number | string = +req.query.page || 1;
+
+        const pageCount = await Product.find().countDocuments();
+
+        const products = await ProductsPaginationPagination(
+            page,
+            ITEMS_PER_PAGE
+        );
 
         res.render("shop/product-list", {
             prods: products,
@@ -30,11 +44,21 @@ class ShopController {
             path: "/",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            currentPage: page,
+            hasNextPage: checkForNextPage(ITEMS_PER_PAGE, page, pageCount),
+            hasPreviousPage: calcPrevPage(page),
+            nextPage: getNextPage(page),
+            previousPage: getPrevPage(page),
+            lastPage: getLastPage(pageCount, ITEMS_PER_PAGE),
         });
     }
 
     async getAllProducts(req: Request, res: Response, next: NextFunction) {
-        const products = await Product.find();
+        const page: number | string = +req.query.page || 1;
+
+        const pageCount = await Product.find().countDocuments();
+
+        const products = await ProductsPagination(page, ITEMS_PER_PAGE);
 
         res.render("shop/product-list", {
             prods: products,
@@ -42,6 +66,12 @@ class ShopController {
             path: "/products",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            currentPage: page,
+            hasNextPage: checkForNextPage(ITEMS_PER_PAGE, page, pageCount),
+            hasPreviousPage: calcPrevPage(page),
+            nextPage: getNextPage(page),
+            previousPage: getPrevPage(page),
+            lastPage: getLastPage(pageCount, ITEMS_PER_PAGE),
         });
     }
 

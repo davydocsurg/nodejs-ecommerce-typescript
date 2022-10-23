@@ -1,7 +1,7 @@
 import { Request, NextFunction, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
-import { authCheck, goHome } from "../helpers/helper";
+import { authCheck, goHome } from "../helpers";
 import Logging from "../helpers/logs";
 import MailServices, { transporter } from "../services/mailServices";
 import { smtpSender } from "../utils/constants";

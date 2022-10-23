@@ -1,6 +1,6 @@
 import express from "express";
 import ShopController from "../controllers/ShopController";
-import { catchAsync } from "../helpers/helper";
+import { catchAsync } from "../helpers";
 import isAuthenticated from "../middleware/auth";
 
 const shopRoutes = express.Router();

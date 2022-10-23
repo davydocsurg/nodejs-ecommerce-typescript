@@ -1,6 +1,6 @@
 import express from "express";
 import ProductController from "../controllers/ProductController";
-import { catchAsync } from "../helpers/helper";
+import { catchAsync } from "../helpers";
 import isAuthenticated from "../middleware/auth";
 import { body, CustomValidator } from "express-validator";
 
