@@ -3,7 +3,14 @@ import { NextFunction, Request, Response } from "express";
 import { getOne } from "./HandlerFactory";
 import Order from "../models/Order";
 import { OrderType } from "../interfaces/order";
-import { authCheck } from "../helpers/helper";
+import {
+    authCheck,
+    calcPrevPage,
+    checkForNextPage,
+    getLastPage,
+    getNextPage,
+    getPrevPage,
+} from "../helpers/helper";
 import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";
@@ -21,7 +28,9 @@ class ShopController {
     }
 
     async getIndex(req: Request, res: Response, next: NextFunction) {
-        const page: number | any = req.query.page;
+        const page: number | string = +req.query.page || 1;
+
+        const pageCount = await Product.find().countDocuments();
 
         const products = await Product.find()
             .skip((page - 1) * ITEMS_PER_PAGE)
@@ -33,6 +42,12 @@ class ShopController {
             path: "/",
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
+            currentPage: page,
+            hasNextPage: checkForNextPage(ITEMS_PER_PAGE, page, pageCount),
+            hasPreviousPage: calcPrevPage(page),
+            nextPage: getNextPage(page),
+            previousPage: getPrevPage(page),
+            lastPage: getLastPage(pageCount, ITEMS_PER_PAGE),
         });
     }
 

@@ -35,3 +35,27 @@ export const csrfSetup = (req: Request, res: Response, next: Function) => {
     res.locals.csrfToken = req.csrfToken();
     next();
 };
+
+export const checkForNextPage = (
+    ITEMS_PER_PAGE: number,
+    page: number,
+    totalItems: number
+) => {
+    return ITEMS_PER_PAGE * page < totalItems;
+};
+
+export const calcPrevPage = (page: number) => {
+    return page > 1;
+};
+
+export const getNextPage = (page: number) => {
+    return page + 1;
+};
+
+export const getPrevPage = (page: number) => {
+    return page - 1;
+};
+
+export const getLastPage = (totalItems: number, ITEMS_PER_PAGE: number) => {
+    return Math.ceil(totalItems / ITEMS_PER_PAGE);
+};

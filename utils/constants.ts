@@ -24,4 +24,4 @@ export const smtpPassword: string | undefined = process.env.SMTP_PASSWORD;
 export const sendgridAPIKey: string | undefined = process.env.SENDGRID_API_KEY;
 
 // pagination
-export const ITEMS_PER_PAGE: number = 2;
+export const ITEMS_PER_PAGE: number = 1;
