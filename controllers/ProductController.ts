@@ -10,7 +10,7 @@ import {
     getLastPage,
     getNextPage,
     getPrevPage,
-} from "../helpers/helper";
+} from "../helpers";
 import Logging from "../helpers/logs";
 import { validationResult } from "express-validator";
 import { destroyFile } from "../helpers/file";

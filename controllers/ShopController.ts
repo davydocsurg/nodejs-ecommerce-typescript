@@ -11,7 +11,7 @@ import {
     getNextPage,
     getPrevPage,
     ProductsPagination,
-} from "../helpers/helper";
+} from "../helpers";
 import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";

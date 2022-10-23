@@ -1,6 +1,6 @@
 import express from "express";
 import AuthController from "../controllers/AuthController";
-import { catchAsync } from "../helpers/helper";
+import { catchAsync } from "../helpers";
 import { check } from "express-validator";
 
 const authRoutes = express.Router();
