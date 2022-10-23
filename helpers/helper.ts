@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { Model } from "mongoose";
+import Product from "../models/Product";
 import User from "../models/User";
 
 export const catchAsync = (fn: Function) => {
@@ -17,6 +19,26 @@ export const authCheck = (req: Request) => {
 
 export const goHome = (res: Response) => {
     res.redirect("/");
+};
+
+export const ProductsPagination = (page: number, ITEMS_PER_PAGE: number) => {
+    return Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+};
+
+export const AdminProductsPagination = (
+    page: number,
+    ITEMS_PER_PAGE: number,
+    req: Request
+) => {
+    return Product.find({
+        userId: req.session.user?._id,
+    })
+        .populate("userId")
+
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
 };
 
 export const findUserById = async (req: Request, next: NextFunction) => {
