@@ -1,4 +1,4 @@
 /node_modules
 .env
-/public/products/images/
-/public/invoices/*.pdf
+# /public/products/images/
+# /public/invoices/*.pdf
