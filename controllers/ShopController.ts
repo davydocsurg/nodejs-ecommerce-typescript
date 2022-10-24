@@ -26,6 +26,7 @@ class ShopController {
         this.addProdToCart = this.addProdToCart.bind(this);
         this.deleteItemFromCart = this.deleteItemFromCart.bind(this);
         this.createOrder = this.createOrder.bind(this);
+        this.getCheckout = this.getCheckout.bind(this);
     }
 
     async getIndex(req: Request, res: Response, next: NextFunction) {
@@ -33,10 +34,7 @@ class ShopController {
 
         const pageCount = await Product.find().countDocuments();
 
-        const products = await ProductsPaginationPagination(
-            page,
-            ITEMS_PER_PAGE
-        );
+        const products = await ProductsPagination(page, ITEMS_PER_PAGE);
 
         res.render("shop/product-list", {
             prods: products,
@@ -215,6 +213,25 @@ class ShopController {
         // const file = await fs.createReadStream(invoicePath);
 
         // file.pipe(res);
+    }
+
+    async getCheckout(req: Request, res: Response, next: NextFunction) {
+        const user = await req.user.populate("cart.items.productId");
+        const products = user.cart.items;
+        let total = 0;
+        await products.forEach((p: any) => {
+            Logging.info("product---" + p);
+            total += p.quantity + p.product.price;
+        });
+
+        return res.render("shop/checkout", {
+            path: "/checkout",
+            pageTitle: "Checkout",
+            products: products,
+            total: total,
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+        });
     }
 }
 
