@@ -21,5 +21,11 @@
                     <h2>Total: <%= total %>
                     </h2>
                 </div>
+                <div class="centered">
+                    <form action="/checkout" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit">Checkout</button>
+                    </form>
+                </div>
             </main>
             <%- include('../includes/end.ejs') %>

@@ -16,7 +16,8 @@ import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";
 import PDFDocument from "pdfkit";
-import { ITEMS_PER_PAGE } from "../utils/constants";
+import { ITEMS_PER_PAGE, stripeAPIKey } from "../utils/constants";
+import Stripe from "stripe";
 
 class ShopController {
     constructor() {
@@ -220,7 +221,6 @@ class ShopController {
         const products = user.cart.items;
         let total = 0;
         await products.forEach((p: any) => {
-            Logging.info("product---" + p);
             total += p.quantity + p.product.price;
         });
 
@@ -232,6 +232,32 @@ class ShopController {
             isAuthenticated: authCheck(req),
             csrfToken: req.csrfToken(),
         });
+    }
+
+    async checkout(req: Request, res: Response, next: NextFunction) {
+        const stripe = new Stripe(stripeAPIKey, {
+            apiVersion: "2022-08-01",
+        });
+
+        await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    price_data: {
+                        currency: "usd",
+                        product_data: {
+                            name: "T-shirt",
+                        },
+                        unit_amount: 2000,
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: "payment",
+            success_url: "http://localhost:3001/checkout",
+            cancel_url: "http://localhost:3001/checkout",
+        });
+
+        return res.redirect("/checkout");
     }
 }
 

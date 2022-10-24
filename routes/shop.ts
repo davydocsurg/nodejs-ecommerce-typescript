@@ -49,4 +49,10 @@ shopRoutes.post(
     catchAsync(ShopController.deleteItemFromCart)
 );
 
+shopRoutes.post(
+    "/checkout",
+    isAuthenticated,
+    catchAsync(ShopController.checkout)
+);
+
 export default shopRoutes;
