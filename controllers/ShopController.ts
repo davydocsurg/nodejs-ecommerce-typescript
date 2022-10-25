@@ -92,10 +92,9 @@ class ShopController {
         const prodId = req.body.id.trim();
 
         const product = await Product.findById(prodId);
-        // req.user = req.session.user;
-        req.user.addToCart(product);
+        await req.user.addToCart(product);
 
-        res.redirect("/cart");
+        return res.redirect("/checkout");
     }
 
     async getCart(req: Request, res: Response, next: NextFunction) {
