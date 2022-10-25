@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { Model } from "mongoose";
 import Product from "../models/Product";
 import User from "../models/User";
 
@@ -53,7 +52,7 @@ export const findUserById = async (req: Request, next: NextFunction) => {
 };
 
 export const csrfSetup = (req: Request, res: Response, next: Function) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.isAuthenticated = authCheck(req);
     res.locals.csrfToken = req.csrfToken();
     next();
 };

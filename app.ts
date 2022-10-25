@@ -30,20 +30,11 @@ app.use(sessionMiddleware);
 app.use((req: Request, res: Response, next: NextFunction) => {
     findUserById(req, next);
 });
+
 // app.use((req: Request, res: Response, next: NextFunction) => {
-//     console.log("app.ts", req.session.user._id);
-
-//     User.findById(req.session.user._id)
-//         .then((user) => {
-//             // console.log(user);
-
-//             req.user = user;
-//             next();
-//         })
-//         .catch((err) => {
-//             console.error(err);
-//         });
+//     csrfSetup(req, res, next);
 // });
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
     multer({ storage: fileStorage, fileFilter: fileValidation }).single("image")
@@ -62,10 +53,6 @@ app.use(authRoutes);
 app.use(get404);
 app.use(flashMsg());
 app.use(authCheck);
-
-app.use((req: Request, res: Response, next: NextFunction) => {
-    csrfSetup(req, res, next);
-});
 
 app.listen(port, () => {
     MailService.createConnection();
