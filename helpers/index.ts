@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { Model } from "mongoose";
 import Product from "../models/Product";
 import User from "../models/User";
 
@@ -53,7 +52,7 @@ export const findUserById = async (req: Request, next: NextFunction) => {
 };
 
 export const csrfSetup = (req: Request, res: Response, next: Function) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.isAuthenticated = authCheck(req);
     res.locals.csrfToken = req.csrfToken();
     next();
 };
@@ -80,4 +79,10 @@ export const getPrevPage = (page: number) => {
 
 export const getLastPage = (totalItems: number, ITEMS_PER_PAGE: number) => {
     return Math.ceil(totalItems / ITEMS_PER_PAGE);
+};
+
+export const getUserProducts = async (req: Request) => {
+    const user = await req.user.populate("cart.items.productId");
+    const products = user.cart.items;
+    return products;
 };

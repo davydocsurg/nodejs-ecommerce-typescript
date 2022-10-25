@@ -26,6 +26,12 @@ shopRoutes.get(
     catchAsync(ShopController.getInvoice)
 );
 
+shopRoutes.get(
+    "/checkout",
+    isAuthenticated,
+    catchAsync(ShopController.getCheckout)
+);
+
 // post routes
 shopRoutes.post(
     "/create-order",
@@ -41,6 +47,12 @@ shopRoutes.post(
     "/cart-delete-item",
     isAuthenticated,
     catchAsync(ShopController.deleteItemFromCart)
+);
+
+shopRoutes.post(
+    "/checkout",
+    isAuthenticated,
+    catchAsync(ShopController.checkout)
 );
 
 export default shopRoutes;

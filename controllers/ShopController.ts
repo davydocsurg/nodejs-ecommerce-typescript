@@ -10,13 +10,15 @@ import {
     getLastPage,
     getNextPage,
     getPrevPage,
+    getUserProducts,
     ProductsPagination,
 } from "../helpers";
 import fs from "fs";
 import path from "path";
 import Logging from "../helpers/logs";
 import PDFDocument from "pdfkit";
-import { ITEMS_PER_PAGE } from "../utils/constants";
+import { ITEMS_PER_PAGE, stripeAPIKey } from "../utils/constants";
+import Stripe from "stripe";
 
 class ShopController {
     constructor() {
@@ -26,6 +28,7 @@ class ShopController {
         this.addProdToCart = this.addProdToCart.bind(this);
         this.deleteItemFromCart = this.deleteItemFromCart.bind(this);
         this.createOrder = this.createOrder.bind(this);
+        this.getCheckout = this.getCheckout.bind(this);
     }
 
     async getIndex(req: Request, res: Response, next: NextFunction) {
@@ -33,10 +36,7 @@ class ShopController {
 
         const pageCount = await Product.find().countDocuments();
 
-        const products = await ProductsPaginationPagination(
-            page,
-            ITEMS_PER_PAGE
-        );
+        const products = await ProductsPagination(page, ITEMS_PER_PAGE);
 
         res.render("shop/product-list", {
             prods: products,
@@ -92,10 +92,9 @@ class ShopController {
         const prodId = req.body.id.trim();
 
         const product = await Product.findById(prodId);
-        // req.user = req.session.user;
-        req.user.addToCart(product);
+        await req.user.addToCart(product);
 
-        res.redirect("/cart");
+        return res.redirect("/checkout");
     }
 
     async getCart(req: Request, res: Response, next: NextFunction) {
@@ -215,6 +214,60 @@ class ShopController {
         // const file = await fs.createReadStream(invoicePath);
 
         // file.pipe(res);
+    }
+
+    async getCheckout(req: Request, res: Response, next: NextFunction) {
+        const products = await getUserProducts(req);
+        let total = 0;
+        await products.forEach((p: any) => {
+            // Logging.info(p);
+            total += p.quantity + p.product.price;
+        });
+
+        return res.render("shop/checkout", {
+            path: "/checkout",
+            pageTitle: "Checkout",
+            products: products,
+            total: total,
+            isAuthenticated: authCheck(req),
+            csrfToken: req.csrfToken(),
+        });
+    }
+
+    async checkout(req: Request, res: Response, next: NextFunction) {
+        const products = await getUserProducts(req);
+        const token = req.body.stripeToken;
+        let total = 0;
+        let productTitle: string = "";
+        await products.forEach((p: any) => {
+            productTitle = p.product.title;
+            total += p.quantity + p.product.price;
+        });
+
+        const stripe = new Stripe(stripeAPIKey, {
+            apiVersion: "2022-08-01",
+        });
+
+        const session = await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    price_data: {
+                        currency: "usd",
+                        product_data: {
+                            name: productTitle,
+                        },
+                        unit_amount: total * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: "payment",
+            success_url: "http://localhost:3001/checkout",
+            cancel_url: "http://localhost:3001/checkout",
+        });
+
+        // return res.redirect("/checkout");
+        return res.redirect(session.url);
     }
 }
 
