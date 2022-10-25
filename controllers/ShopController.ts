@@ -10,6 +10,7 @@ import {
     getLastPage,
     getNextPage,
     getPrevPage,
+    getUserProducts,
     ProductsPagination,
 } from "../helpers";
 import fs from "fs";
@@ -217,10 +218,10 @@ class ShopController {
     }
 
     async getCheckout(req: Request, res: Response, next: NextFunction) {
-        const user = await req.user.populate("cart.items.productId");
-        const products = user.cart.items;
+        const products = await getUserProducts(req);
         let total = 0;
         await products.forEach((p: any) => {
+            // Logging.info(p);
             total += p.quantity + p.product.price;
         });
 
@@ -235,19 +236,28 @@ class ShopController {
     }
 
     async checkout(req: Request, res: Response, next: NextFunction) {
+        const products = await getUserProducts(req);
+        const token = req.body.stripeToken;
+        let total = 0;
+        let productTitle: string = "";
+        await products.forEach((p: any) => {
+            productTitle = p.product.title;
+            total += p.quantity + p.product.price;
+        });
+
         const stripe = new Stripe(stripeAPIKey, {
             apiVersion: "2022-08-01",
         });
 
-        await stripe.checkout.sessions.create({
+        const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
                     price_data: {
                         currency: "usd",
                         product_data: {
-                            name: "T-shirt",
+                            name: productTitle,
                         },
-                        unit_amount: 2000,
+                        unit_amount: total * 100,
                     },
                     quantity: 1,
                 },
@@ -257,7 +267,8 @@ class ShopController {
             cancel_url: "http://localhost:3001/checkout",
         });
 
-        return res.redirect("/checkout");
+        // return res.redirect("/checkout");
+        return res.redirect(session.url);
     }
 }
 

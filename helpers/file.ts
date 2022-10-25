@@ -1,5 +1,5 @@
 import fs from "fs";
-import Logging from "../helpers/logs";
+import Logging from "./logs";
 
 export const destroyFile = (filePath: string) => {
     fs.unlink(filePath, (err: unknown) => {

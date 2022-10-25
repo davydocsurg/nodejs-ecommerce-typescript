@@ -1,6 +1,7 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/cart.css">
-
+    <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     </head>
 
     <body>
@@ -24,7 +25,7 @@
                 <div class="centered">
                     <form action="/checkout" method="POST">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit">Checkout</button>
+                        <button type="submit" id="checkout-button">Checkout</button>
                     </form>
                 </div>
             </main>

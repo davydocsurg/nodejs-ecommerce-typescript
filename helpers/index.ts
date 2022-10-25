@@ -81,3 +81,9 @@ export const getPrevPage = (page: number) => {
 export const getLastPage = (totalItems: number, ITEMS_PER_PAGE: number) => {
     return Math.ceil(totalItems / ITEMS_PER_PAGE);
 };
+
+export const getUserProducts = async (req: Request) => {
+    const user = await req.user.populate("cart.items.productId");
+    const products = user.cart.items;
+    return products;
+};
